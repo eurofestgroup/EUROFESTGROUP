@@ -6,3 +6,36 @@
 @media(max-width:760px){.header{top:12px;height:70px;width:calc(100% - 28px);padding-inline:12px;border-radius:20px;gap:10px}.brand-logo{width:42px;height:42px;border-radius:10px}.brand-name{font-size:13px}.nav{top:78px;border:1px solid #ffffff1c;border-radius:20px;padding:10px;background:#17131cf2;box-shadow:inset 0 1px 0 #ffffff10,0 20px 50px #0004;gap:0}.nav a{font-size:16px;padding:12px}.nav-discord{font-size:11px;border-radius:12px}.menu-button{padding:9px 7px}.hero-content{padding-top:28px}.hero h1{letter-spacing:-1.6px}.hero-actions .button{min-height:54px}.identity-plaque{margin-top:27px;gap:20px}.identity-plaque img{width:116px;height:116px}.identity-plaque strong{font-size:15px}.gallery-heading p{font-size:16px;margin-top:20px}.gallery-signature{display:none}.gallery-toolbar{margin-top:28px;margin-bottom:22px;gap:12px}.event-filters{border-radius:15px;padding:4px;gap:2px;flex-wrap:wrap}.event-filters button{font-size:12px;padding:10px 13px;border-radius:11px}.events-count{font-size:11px}.events-grid{grid-template-columns:1fr;gap:20px}.event-visual{height:220px}.event-card h3{font-size:23px}.event-body{padding:23px}.event-meta{flex-wrap:nowrap}.event-times{padding-top:20px;margin-top:19px}.event-open{padding-block:14px}.gallery-footer{gap:15px}.events-empty{padding:32px 24px}.events-empty h3{font-size:22px}.event-dialog{width:calc(100% - 24px);padding:25px 20px;border-radius:21px;max-height:calc(100svh - 30px)}.event-dialog h2{font-size:25px;margin-top:20px}.detail-fields{padding:18px 16px;gap:18px 14px}.detail-fields dd{font-size:14px}.detail-actions{flex-direction:column}.detail-actions .button{width:100%;min-height:49px}.brand-closing{height:230px}.brand-closing>img{object-fit:cover;object-position:center}.brand-closing .container{bottom:18px}.footer .brand-name{font-size:14px}.event-skeleton:not(:first-child){display:none}}
 @media(max-width:360px){.nav-discord{display:none}.menu-button{margin-left:auto}.brand-name{font-size:14px}.event-filters button{padding:9px 11px}.event-body{padding:20px}.event-card h3{font-size:21px}.detail-fields{grid-template-columns:1fr 1fr}}
 @media(prefers-reduced-motion:reduce){.event-card:hover,.event-card:hover .event-visual>img{transform:none}.glass-surface::before{display:none}}
+
+/* Keep the glass highlights inside each surface. Large outer shadow layers can
+   produce opaque rectangles on some browser/graphics combinations. */
+.scroll-progress,
+.identity-plaque img {
+  box-shadow: none;
+}
+.header {
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.09),
+              inset 0 -1px 0 rgba(0,0,0,.18);
+}
+.nav,
+.button,
+.button:hover,
+.principle,
+.convoy-panel,
+.join-card,
+.event-card,
+.event-card:hover,
+.event-filters button[aria-pressed=true],
+.event-date,
+.event-dialog {
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.07);
+}
+/* The existing effects toggle also offers a fully static rendering path. */
+.effects-off *,
+.effects-off *::before,
+.effects-off *::after {
+  box-shadow: none !important;
+  filter: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
