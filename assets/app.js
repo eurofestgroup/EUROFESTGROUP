@@ -31,6 +31,7 @@
     document.documentElement.classList.toggle('effects-off', !effects);
     toggle.setAttribute('aria-pressed', String(effects));
     toggle.textContent = effects ? 'Ефекти: увімкнено' : 'Ефекти: вимкнено';
+    if (!effects) document.querySelectorAll('.liquid-glass.is-lit').forEach(surface => surface.classList.remove('is-lit'));
   };
   toggle.addEventListener('click', () => {
     effects = !effects; explicitPreference = true; updateEffects();
@@ -39,22 +40,59 @@
   reduceMotion.addEventListener('change', () => { if (!explicitPreference) { effects = !reduceMotion.matches; updateEffects(); } });
   updateEffects();
   document.querySelectorAll('.principle, .convoy-panel, .join-card').forEach(card => card.classList.add('glass-surface'));
-  let glowPending = false, glowTarget = null, glowPoint = null;
+  const glassSelector = '.header, .nav-discord, .button, .principle, .convoy-panel, .join-card, .event-filters, .event-filters button, .event-card, .event-date, .event-open, .events-empty, .event-dialog, .event-close, .effects-toggle, .faq details';
+  const decorateGlass = root => {
+    if (root.matches?.(glassSelector)) root.classList.add('liquid-glass');
+    root.querySelectorAll(glassSelector).forEach(surface => surface.classList.add('liquid-glass'));
+  };
+  decorateGlass(document);
+  // Cards and dialog controls are created after the events API responds.
+  if ('MutationObserver' in window) {
+    const glassObserver = new MutationObserver(records => {
+      records.forEach(record => record.addedNodes.forEach(node => {
+        if (node.nodeType === 1) decorateGlass(node);
+      }));
+    });
+    ['events-grid', 'event-detail'].forEach(id => {
+      const root = document.getElementById(id);
+      if (root) glassObserver.observe(root, { childList: true, subtree: true });
+    });
+  }
+  let glowFrame = 0, glowTarget = null, glowPoint = null, litSurface = null;
+  const clearGlassLight = () => {
+    if (glowFrame) cancelAnimationFrame(glowFrame);
+    glowFrame = 0;
+    litSurface?.classList.remove('is-lit');
+    litSurface = glowTarget = glowPoint = null;
+  };
   document.addEventListener('pointermove', event => {
-    if (!effects || reduceMotion.matches || event.pointerType !== 'mouse') return;
-    const card = event.target.closest('.glass-surface');
-    if (!card) return;
-    glowTarget = card; glowPoint = { x: event.clientX, y: event.clientY };
-    if (!glowPending) {
-      glowPending = true;
-      requestAnimationFrame(() => {
+    if (!effects || reduceMotion.matches || document.hidden || event.pointerType !== 'mouse') {
+      clearGlassLight(); return;
+    }
+    const surface = event.target.closest?.(glassSelector);
+    if (!surface) { clearGlassLight(); return; }
+    glowTarget = surface; glowPoint = { x: event.clientX, y: event.clientY };
+    if (!glowFrame) {
+      glowFrame = requestAnimationFrame(() => {
+        glowFrame = 0;
+        if (!effects || reduceMotion.matches || !glowTarget?.isConnected || !glowPoint) { clearGlassLight(); return; }
         const rect = glowTarget.getBoundingClientRect();
-        glowTarget.style.setProperty('--glow-x', `${glowPoint.x - rect.left}px`);
-        glowTarget.style.setProperty('--glow-y', `${glowPoint.y - rect.top}px`);
-        glowPending = false;
+        if (!rect.width || !rect.height) { clearGlassLight(); return; }
+        const x = Math.max(0, Math.min(100, (glowPoint.x - rect.left) / rect.width * 100));
+        const y = Math.max(0, Math.min(100, (glowPoint.y - rect.top) / rect.height * 100));
+        if (litSurface !== glowTarget) litSurface?.classList.remove('is-lit');
+        glowTarget.style.setProperty('--glass-x', `${x.toFixed(2)}%`);
+        glowTarget.style.setProperty('--glass-y', `${y.toFixed(2)}%`);
+        glowTarget.classList.add('is-lit');
+        litSurface = glowTarget;
       });
     }
   }, { passive: true });
+  document.addEventListener('pointerout', event => { if (!event.relatedTarget) clearGlassLight(); }, { passive: true });
+  document.addEventListener('visibilitychange', () => { if (document.hidden) clearGlassLight(); });
+  window.addEventListener('blur', clearGlassLight);
+  window.addEventListener('scroll', clearGlassLight, { passive: true });
+  reduceMotion.addEventListener('change', clearGlassLight);
   if ('IntersectionObserver' in window) {
     document.documentElement.classList.add('motion-ready');
     const revealObserver = new IntersectionObserver(entries => {

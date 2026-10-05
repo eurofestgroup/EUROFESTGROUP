@@ -39,3 +39,289 @@
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
 }
+
+/* EUROFEST Liquid Glass: translucent lenses and contained edge highlights.
+   Reflections use gradients, so they do not create outer shadow/blur layers. */
+html { scroll-padding-top: 116px; }
+body {
+  background-color: #09090c;
+  background-image:
+    radial-gradient(ellipse 720px 520px at 4% 1320px, rgba(226,36,64,.12), transparent 75%),
+    radial-gradient(ellipse 820px 660px at 96% 1950px, rgba(129,151,185,.10), transparent 74%),
+    radial-gradient(ellipse 760px 600px at 7% 3350px, rgba(226,36,64,.09), transparent 75%);
+  background-repeat: no-repeat;
+}
+.liquid-glass {
+  --glass-x: 50%;
+  --glass-y: 0%;
+  --glass-fill: rgba(29,28,36,.62);
+  --glass-blur: 14px;
+  --glass-edge: rgba(255,255,255,.22);
+  background:
+    radial-gradient(ellipse at 0% 0%, rgba(255,255,255,.10), transparent 68%),
+    linear-gradient(140deg, rgba(255,255,255,.07), rgba(255,255,255,.01) 48%, rgba(241,50,73,.035)),
+    var(--glass-fill);
+  border: 1px solid var(--glass-edge);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.22),
+    inset 1px 0 0 rgba(255,255,255,.07),
+    inset 0 -1px 0 rgba(0,0,0,.25);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(145%);
+  backdrop-filter: blur(var(--glass-blur)) saturate(145%);
+  transition: border-color .25s, background-color .25s, transform .3s var(--ease);
+}
+.button,
+.nav-discord,
+.event-filters,
+.event-filters button,
+.event-open,
+.effects-toggle,
+.faq details {
+  position: relative;
+}
+.liquid-glass::before {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  border-radius: inherit;
+  background:
+    radial-gradient(ellipse 65% 100% at var(--glass-x) var(--glass-y), rgba(255,255,255,.18), transparent 74%),
+    linear-gradient(118deg, transparent 12%, rgba(255,255,255,.045) 38%, transparent 62%);
+  opacity: .45;
+  transition: opacity .35s;
+  pointer-events: none;
+  z-index: 1;
+}
+.liquid-glass::after {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  border: 1px solid transparent;
+  border-top-color: rgba(255,255,255,.17);
+  border-left-color: rgba(255,255,255,.07);
+  border-bottom-color: rgba(180,194,218,.055);
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 1;
+}
+.liquid-glass:hover,
+.liquid-glass.is-lit,
+.liquid-glass:focus-within {
+  border-color: rgba(255,255,255,.38);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.30),
+    inset 1px 0 0 rgba(255,255,255,.10),
+    inset 0 -1px 0 rgba(0,0,0,.22);
+}
+.liquid-glass:hover::before,
+.liquid-glass.is-lit::before,
+.liquid-glass:focus-within::before {
+  opacity: 1;
+}
+.header {
+  position: fixed;
+  --glass-fill: rgba(19,18,25,.48);
+  --glass-blur: 18px;
+  border-radius: 28px;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.26),
+    inset 1px 0 0 rgba(255,255,255,.08),
+    inset 0 -1px 0 rgba(255,255,255,.04);
+}
+.header .liquid-glass {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+.nav-discord,
+.button,
+.event-open,
+.effects-toggle {
+  border-radius: 999px;
+  --glass-blur: 10px;
+}
+.nav-discord { --glass-fill: rgba(255,255,255,.035); }
+.button-glass { --glass-fill: rgba(37,35,44,.37); }
+.button-red {
+  background:
+    linear-gradient(130deg, rgba(255,255,255,.16), transparent 55%),
+    linear-gradient(140deg, rgba(246,65,88,.87), rgba(220,28,54,.76));
+  border-color: rgba(255,158,172,.48);
+}
+.button-red:hover {
+  background:
+    linear-gradient(130deg, rgba(255,255,255,.21), transparent 55%),
+    linear-gradient(140deg, rgba(255,76,99,.94), rgba(233,36,63,.87));
+  border-color: rgba(255,189,198,.65);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.35), inset 0 -1px 0 rgba(135,0,25,.25);
+}
+.button-glass:hover,
+.nav-discord:hover,
+.event-open:hover {
+  background:
+    radial-gradient(ellipse at 0% 0%, rgba(255,255,255,.12), transparent 68%),
+    linear-gradient(140deg, rgba(255,255,255,.08), rgba(255,255,255,.02)),
+    var(--glass-fill);
+}
+.button:hover { transform: translateY(-2px); }
+.button:active,
+.nav-discord:active,
+.event-open:active,
+.event-filters button:active {
+  transform: scale(.985);
+}
+.principle,
+.convoy-panel,
+.join-card {
+  border-radius: 26px;
+  --glass-fill: rgba(24,22,30,.54);
+}
+.convoys {
+  background: rgba(17,16,22,.50);
+  border-color: rgba(255,255,255,.075);
+}
+.event-card {
+  border-radius: 26px;
+  --glass-fill: rgba(23,22,31,.58);
+  --glass-blur: 12px;
+}
+.event-card:hover {
+  border-color: rgba(244,132,152,.48);
+  transform: translateY(-4px);
+}
+.event-card::before {
+  background:
+    radial-gradient(ellipse 95% 45% at var(--glass-x) var(--glass-y), rgba(255,255,255,.10), transparent 76%),
+    linear-gradient(125deg, rgba(255,255,255,.035), transparent 45%);
+}
+.event-date {
+  --glass-fill: rgba(18,17,24,.56);
+  --glass-blur: 10px;
+  border-radius: 17px;
+  border-color: rgba(255,255,255,.40);
+}
+.event-date strong,
+.event-date span { position: relative; z-index: 2; }
+.event-card .event-open {
+  --glass-fill: rgba(255,255,255,.045);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+.event-filters {
+  border-radius: 999px;
+  --glass-fill: rgba(27,25,34,.47);
+  --glass-blur: 12px;
+}
+.event-filters button {
+  background: transparent;
+  border-color: transparent;
+  border-radius: 999px;
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  color: #b9b2c2;
+}
+.event-filters button::before,
+.event-filters button::after { opacity: 0; }
+.event-filters button[aria-pressed=true] {
+  background: linear-gradient(140deg, rgba(255,255,255,.20), rgba(255,255,255,.055));
+  border-color: rgba(255,255,255,.30);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.25), inset 0 -1px 0 rgba(0,0,0,.13);
+  color: #fff;
+}
+.event-filters button[aria-pressed=true]::before,
+.event-filters button[aria-pressed=true]::after { opacity: .65; }
+.events-empty { --glass-fill: rgba(25,23,32,.54); border-radius: 26px; }
+.event-dialog {
+  --glass-fill: rgba(23,21,30,.89);
+  --glass-blur: 18px;
+  border-radius: 30px;
+  border-color: rgba(255,255,255,.32);
+}
+.event-dialog::backdrop {
+  background: rgba(6,5,10,.60);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+.event-close {
+  --glass-fill: rgba(255,255,255,.075);
+  --glass-blur: 0px;
+}
+.detail-fields {
+  background: linear-gradient(140deg, rgba(255,255,255,.055), rgba(255,255,255,.015));
+  border-color: rgba(255,255,255,.10);
+  border-radius: 20px;
+}
+.faq details {
+  --glass-fill: rgba(26,24,32,.43);
+  --glass-blur: 10px;
+  border-radius: 18px;
+  margin-bottom: 12px;
+  padding: 18px 20px;
+}
+.faq details[open] { border-color: rgba(244,132,152,.34); }
+.effects-toggle { --glass-fill: rgba(28,25,35,.48); }
+/* No-filter browsers still get the rounded lenses and readable dark tint. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .liquid-glass { --glass-fill: rgba(24,22,31,.95); }
+}
+@media (max-width: 760px) {
+  html { scroll-padding-top: 104px; }
+  .header { border-radius: 24px; --glass-blur: 14px; }
+  .nav {
+    background: linear-gradient(140deg, rgba(41,37,50,.93), rgba(17,15,23,.94));
+    border-radius: 22px;
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.17);
+  }
+  .nav-discord { border-radius: 999px; }
+  .event-filters { border-radius: 22px; }
+  .principle,
+  .convoy-panel,
+  .join-card,
+  .event-card { --glass-blur: 10px; border-radius: 24px; }
+  .event-dialog { border-radius: 26px; }
+  .faq details { padding: 17px 18px; }
+}
+/* Accessibility and the manual toggle keep a complete, usable static mode. */
+.effects-off .liquid-glass {
+  background: #17141d;
+  border-color: rgba(255,255,255,.18);
+}
+.effects-off .button-red,
+.effects-off .button-red:hover { background: #e82d46; }
+.effects-off .event-filters button { background: transparent; border-color: transparent; }
+.effects-off .event-filters button[aria-pressed=true] { background: #34303c; border-color: rgba(255,255,255,.25); }
+.effects-off .liquid-glass::before,
+.effects-off .liquid-glass::after { display: none; }
+.effects-off .button,
+.effects-off .nav-discord,
+.effects-off .event-open,
+.effects-off .event-filters button,
+.effects-off .event-card { transform: none !important; }
+.effects-off .event-dialog::backdrop {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  .liquid-glass { transition: none; }
+  .liquid-glass::before { display: none; }
+  .button,
+  .nav-discord,
+  .event-open,
+  .event-filters button,
+  .event-card { transform: none !important; }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .liquid-glass {
+    background: #17141d;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  .button-red,
+  .button-red:hover { background: #e82d46; }
+  .event-filters button { background: transparent; }
+  .event-filters button[aria-pressed=true] { background: #34303c; }
+  .liquid-glass::before,
+  .liquid-glass::after { display: none; }
+}
