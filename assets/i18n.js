@@ -54,7 +54,7 @@
       if (!raw || raw.startsWith('#')) return;
       try {
         const url = new URL(raw, location.href);
-        if (url.origin === location.origin && /\/(?:index|photos)\.html$/.test(url.pathname)) {
+        if (url.origin === location.origin && /\/(?:index|photos|archive)\.html$/.test(url.pathname)) {
           url.searchParams.set('lang', language);
           anchor.setAttribute('href', url.pathname + url.search + url.hash);
         }
