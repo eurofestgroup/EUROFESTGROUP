@@ -35,3 +35,6 @@ h1,h2,h3,h4{overflow-wrap:break-word}h2{letter-spacing:-.035em}.community-intro 
 @media(prefers-reduced-transparency:reduce){.header,.community-card,.event-card,.principle,.convoy-panel,.join-card{background:#15151b;backdrop-filter:none;-webkit-backdrop-filter:none}.event-dialog::backdrop,.photo-dialog::backdrop{backdrop-filter:none;-webkit-backdrop-filter:none}}
 /* Comfortable targets for touch and keyboard without shifting content. */
 .language-switch button{min-height:44px}.text-link{min-height:44px;display:inline-flex;align-items:center}.faq summary{min-height:44px;align-items:center}.faq details{padding-block:16px}.effects-toggle{min-height:44px}
+/* Purchase links retain the compact event details layout. */
+.detail-fields .dlc-link{color:#ff8d9b;text-decoration:underline;text-decoration-color:#ff8d9b88;text-underline-offset:3px;text-decoration-thickness:1px;border-radius:3px;overflow-wrap:anywhere}
+.detail-fields .dlc-link:hover{color:#ffc0c8;text-decoration-color:currentColor}

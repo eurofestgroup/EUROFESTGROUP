@@ -70,6 +70,32 @@
     if (!href) return null;
     const node = el('a', className, label); node.href = href; node.target = '_blank'; node.rel = 'noopener noreferrer'; return node;
   };
+  function dlcField(value) {
+    const field = el('dd', 'detail-dlc');
+    const source = value || 'Уточнюється';
+    const english = window.EUROFEST_I18N?.locale?.startsWith('en');
+    const description = english ? 'Open DLC purchase page (new tab)' : 'Відкрити сторінку купівлі DLC (нова вкладка)';
+    // The DB already stores Discord-style [DLC name](purchase URL) links.
+    // Render only links and text, never HTML supplied by an event.
+    const tokens = /\[([^\]\r\n]+)\]\s*\(\s*(https?:\/\/[^\s<>]+?)\s*\)|https?:\/\/[^\s<>\[\]()]+/gi;
+    let offset = 0;
+    for (const match of source.matchAll(tokens)) {
+      field.append(document.createTextNode(source.slice(offset, match.index)));
+      const url = match[2] || match[0].replace(/[.,;]+$/, '');
+      const trailing = match[2] ? '' : match[0].slice(url.length);
+      const label = match[1]?.trim() || (english ? 'Open DLC' : 'Відкрити DLC');
+      const anchor = link(label, url, 'dlc-link');
+      if (anchor) {
+        anchor.setAttribute('data-no-i18n', '');
+        anchor.title = description;
+        anchor.setAttribute('aria-label', `${label} — ${description}`);
+        field.append(anchor, document.createTextNode(trailing));
+      } else field.append(document.createTextNode(match[0]));
+      offset = match.index + match[0].length;
+    }
+    field.append(document.createTextNode(source.slice(offset)));
+    return field;
+  }
   const normalize = raw => {
     if (!raw || typeof raw !== 'object' || typeof raw.id !== 'string' || typeof raw.title !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(raw.date || '') || !validDate(raw.end_at)) return null;
     const event = {};
@@ -146,7 +172,7 @@
     detail.append(day);
     const fields = el('dl', 'detail-fields');
     const values = [['Збір', event.gather_time], ['Виїзд', event.start_time], ['Місце збору',event.departure], ['Прибуття', event.arrival], ['Сервер',event.server], ['Організатор',event.organizer], ['DLC',event.dlc], ['Слот',event.slot]];
-    values.forEach(([label,value]) => { const field = el('div'); field.append(el('dt','',label),el('dd','',value || 'Уточнюється')); fields.append(field); });
+    values.forEach(([label,value]) => { const field = el('div'); field.append(el('dt','',label), label === 'DLC' ? dlcField(value) : el('dd','',value || 'Уточнюється')); fields.append(field); });
     detail.append(fields);
     if (event.route && !safeUrl(event.route)) detail.append(el('p', 'detail-route', event.route));
     [['Маршрут',event.route_image_url],['Слот',event.slot_image_url]].forEach(([label,url]) => {
