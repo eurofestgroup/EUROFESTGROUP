@@ -31,9 +31,20 @@
       const card = node('button', 'photo-card liquid-glass'); card.type = 'button'; card.dataset.photoId = photo.id;
       card.setAttribute('aria-label', photo.caption || t('Фото з події EUROFEST'));
       if (photo.caption) card.setAttribute('data-no-i18n', '');
-      const image = node('img'); image.src = photo.thumbnail; image.alt = photo.caption || t('Фото з події EUROFEST');
+      const image = node('img'); image.alt = photo.caption || t('Фото з події EUROFEST');
       image.loading = 'lazy'; image.decoding = 'async'; image.width = 800; image.height = 600;
-      image.addEventListener('error', () => { image.hidden = true; card.classList.add('photo-unavailable'); }, { once: true });
+      // A Discord preview can fail while the original attachment still works.
+      // Retry the original once; never loop on two unavailable URLs.
+      let usedOriginal = photo.thumbnail === photo.url;
+      image.addEventListener('error', () => {
+        if (!usedOriginal) {
+          usedOriginal = true;
+          image.src = photo.url;
+          return;
+        }
+        image.hidden = true; card.classList.add('photo-unavailable');
+      });
+      image.src = photo.thumbnail;
       const overlay = node('span', 'photo-card-meta'); overlay.append(node('span', '', dateLabel(photo.date)), node('span', 'photo-expand', '↗'));
       card.append(image, overlay); card.addEventListener('click', () => openPhoto(photo.id, card)); grid.append(card);
     }
@@ -86,7 +97,7 @@
       const data = await response.json();
       if (!['ok', 'loading', 'unavailable', 'not_configured', 'stale'].includes(data.status) || (data.data !== null && !Array.isArray(data.data))) throw Error('invalid');
       state = data.status; lastUpdated = data.updated_at || '';
-      photos = (data.data || []).slice(0, 500).filter(photo => typeof photo.id === 'string' && safeImage(photo.url) && safeImage(photo.thumbnail)).map(photo => ({ ...photo, caption: String(photo.caption || '').slice(0, 240) }));
+      photos = (data.data || []).slice(0, 500).filter(photo => typeof photo.id === 'string' && safeImage(photo.url)).map(photo => ({ ...photo, thumbnail: safeImage(photo.thumbnail) || safeImage(photo.url), caption: String(photo.caption || '').slice(0, 240) }));
       loaded = true; render();
       if (dialog.open) displayPhoto();
     } catch (_) {
