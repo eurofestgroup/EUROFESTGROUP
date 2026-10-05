@@ -27,7 +27,7 @@
     const fallback = el('span', 'image-initials', Array.from(name || 'EF').slice(0, 2).join('').toUpperCase());
     fallback.setAttribute('aria-hidden', 'true'); wrap.append(fallback);
     if (safe(url)) {
-      const img = el('img'); img.alt = ''; img.loading = 'lazy'; img.referrerPolicy = 'no-referrer';
+      const img = el('img'); img.alt = ''; img.loading = 'lazy'; img.decoding = 'async'; img.referrerPolicy = 'no-referrer';
       img.addEventListener('load', () => { fallback.hidden = true; });
       img.addEventListener('error', () => { img.remove(); fallback.hidden = false; }, { once: true });
       img.src = safe(url); wrap.append(img);
@@ -57,7 +57,7 @@
   function renderNews(state) {
     const root = document.getElementById('news-grid'); root.replaceChildren(); root.setAttribute('aria-busy', 'false');
     if (!state.data?.length) empty(root, state.data ? 'Нові історії EUROFEST незабаром з’являться тут.' : 'Публікації доступні на сторінці компанії у TruckersMP.');
-    (state.data || []).forEach((item, i) => {
+    (state.data || []).slice(0,12).forEach((item, i) => {
       const card = el('article', `community-card news-card liquid-glass${i === 0 ? ' news-featured' : ''}`);
       const meta = el('div', 'news-meta');
       meta.append(el('span', '', item.pinned ? 'ЗАКРІПЛЕНО' : 'EUROFEST JOURNAL'), el('span', '', stamp(item.published_at)));
@@ -99,20 +99,25 @@
     });
     status('partners', state);
   }
+  const signatures = {};
+  const renders={profile:renderProfile,news:renderNews,team:renderTeam,partners:renderPartners};
+  function renderChanged(data) {
+    for(const key of Object.keys(renders)){const value=JSON.stringify([data[key].data,window.EUROFEST_I18N?.locale,data[key].data===null?data[key].status:'']);if(signatures[key]!==value){signatures[key]=value;renders[key](data[key]);}else status(key,data[key]);}
+  }
   let busy = false, last = null;
   async function refresh() {
     if (busy) return;
-    busy = true;
+    busy = true;document.getElementById('community-refresh').disabled=true;
     const controller = new AbortController(), timeout = setTimeout(() => controller.abort(), 12000);
     try {
-      const response = await fetch(url, { signal: controller.signal, cache: 'no-store', credentials: 'omit' });
+      const response = await fetch(url, { signal: controller.signal, cache: 'no-cache', credentials: 'omit' });
       if (!response.ok) throw new Error('unavailable');
       const data = await response.json();
       for (const key of ['profile', 'news', 'team', 'partners']) if (!data[key] || !('status' in data[key])) throw new Error('invalid');
       if (data.profile.data && typeof data.profile.data.members_count !== 'number') throw new Error('invalid');
       for (const key of ['news', 'team', 'partners']) if (data[key].data !== null && !Array.isArray(data[key].data)) throw new Error('invalid');
       last = { data, received: Date.now() };
-      renderProfile(data.profile); renderNews(data.news); renderTeam(data.team); renderPartners(data.partners);
+      renderChanged(data);
       const invite = safe(data.invite_url);
       if (invite && /^https:\/\/discord\.com\/channels\/\d+\/1352090871830417582$/.test(invite)) {
         document.querySelectorAll('[data-invite-event]').forEach(a => { a.href = invite; });
@@ -126,12 +131,12 @@
         const teamTime = Date.parse(last.data.team.updated_at || '') || last.received;
         if (Date.now() - teamTime > 900000) { last.data.team = missing; renderTeam(missing); }
       }
-    } finally { clearTimeout(timeout); busy = false; }
+    } finally { clearTimeout(timeout); busy = false;document.getElementById('community-refresh').disabled=false; }
   }
   document.getElementById('community-refresh').addEventListener('click', refresh);
   document.addEventListener('visibilitychange', () => { if (!document.hidden) refresh(); });
   document.addEventListener('eurofest:language', () => {
-    if (last) { renderProfile(last.data.profile); renderNews(last.data.news); renderTeam(last.data.team); renderPartners(last.data.partners); }
+    if (last) { renderChanged(last.data); }
   });
   refresh();
   setInterval(() => { if (!document.hidden) refresh(); }, 60000);

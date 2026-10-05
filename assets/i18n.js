@@ -82,7 +82,7 @@
     }
     if (!scheduled) {
       scheduled = true;
-      queueMicrotask(() => { scheduled = false; for (const node of pending) if (node.isConnected) apply(node); pending.clear(); });
+      queueMicrotask(() => { scheduled = false; for (const node of pending) if (node.isConnected) { let parent=node.parentNode, covered=false;while(parent){if(pending.has(parent)){covered=true;break;}parent=parent.parentNode;}if(!covered)apply(node); } pending.clear(); });
     }
   });
   observer.observe(document.documentElement, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ['aria-label', 'alt', 'title', 'placeholder'] });

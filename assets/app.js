@@ -5,6 +5,7 @@
   document.querySelectorAll('[data-link="discord"]').forEach(link => { link.href = discordUrl; });
   document.getElementById('year').textContent = new Date().getFullYear();
   const menu = document.querySelector('.menu-button');
+  const header=document.querySelector('.header');
   const nav = document.getElementById('navigation');
   const setMenu = open => {
     nav.classList.toggle('open', open);
@@ -12,6 +13,9 @@
     menu.setAttribute('aria-label', open ? 'Закрити меню' : 'Відкрити меню');
   };
   menu.addEventListener('click', () => setMenu(menu.getAttribute('aria-expanded') !== 'true'));
+  const sectionLinks=[...nav.querySelectorAll('a[href^="#"]')].map(link=>({link,target:document.getElementById(link.hash.slice(1))})).filter(item=>item.target);
+  function markSection(id){sectionLinks.forEach(({link,target})=>{const active=target.id===id;link.classList.toggle('is-active',active);if(active)link.setAttribute('aria-current','location');else link.removeAttribute('aria-current');});}
+  if('IntersectionObserver' in window && sectionLinks.length){const sections=new IntersectionObserver(entries=>{const entry=entries.find(item=>item.isIntersecting);if(entry)markSection(entry.target.id);},{rootMargin:'-25% 0px -65% 0px',threshold:0});sectionLinks.forEach(({target})=>sections.observe(target));}
   nav.querySelectorAll('a').forEach(link => link.addEventListener('click', () => setMenu(false)));
   document.addEventListener('keydown', event => {
     if (event.key === 'Escape' && menu.getAttribute('aria-expanded') === 'true') { setMenu(false); menu.focus(); }
@@ -58,6 +62,7 @@
       if (root) glassObserver.observe(root, { childList: true, subtree: true });
     });
   }
+  const finePointer=window.matchMedia('(hover: hover) and (pointer: fine)');
   let glowFrame = 0, glowTarget = null, glowPoint = null, litSurface = null;
   const clearGlassLight = () => {
     if (glowFrame) cancelAnimationFrame(glowFrame);
@@ -66,7 +71,7 @@
     litSurface = glowTarget = glowPoint = null;
   };
   document.addEventListener('pointermove', event => {
-    if (!effects || reduceMotion.matches || document.hidden || !window.matchMedia('(hover: hover) and (pointer: fine)').matches || event.pointerType !== 'mouse') {
+    if (!effects || reduceMotion.matches || document.hidden || !finePointer.matches || event.pointerType !== 'mouse') {
       clearGlassLight(); return;
     }
     const surface = event.target.closest?.(glassSelector);
@@ -103,11 +108,14 @@
   const progress = document.querySelector('.scroll-progress');
   let pending = false;
   const updateProgress = () => {
+    header?.classList.toggle('is-scrolled',window.scrollY>24);
+    if(window.scrollY<80 && sectionLinks.length)markSection('');
     const max = document.documentElement.scrollHeight - window.innerHeight;
     progress.style.width = (max > 0 ? Math.min(100, window.scrollY / max * 100) : 0) + '%';
     pending = false;
   };
   window.addEventListener('scroll', () => { if (!pending) { pending = true; requestAnimationFrame(updateProgress); } }, { passive: true });
   window.addEventListener('resize', updateProgress);
+  document.addEventListener('eurofest:language',()=>requestAnimationFrame(updateProgress));
   updateProgress();
 })();

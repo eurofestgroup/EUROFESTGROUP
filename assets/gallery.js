@@ -17,6 +17,7 @@
   const defaultCover = new URL('assets/convoy.webp', document.baseURI).href;
   let api;
   try { api = new URL(config.apiUrl || '/api/events', location.href); if (archive) api.pathname = api.pathname.replace(/\/events\/?$/, '/archive'); } catch (_) { api = null; }
+  let gridSignature='', detailSignature='';
   let events = [], filter = 'all', loaded = false, fetching = false, currentId = '', trigger = null;
   let formatter = new Intl.DateTimeFormat(window.EUROFEST_I18N?.locale || 'uk-UA', { timeZone: 'Europe/Kyiv', day: 'numeric', month: 'long', year: 'numeric' });
   let monthFormatter = new Intl.DateTimeFormat(window.EUROFEST_I18N?.locale || 'uk-UA', { timeZone: 'Europe/Kyiv', month: 'short' });
@@ -103,6 +104,9 @@
     const query = (search?.value || '').trim().toLocaleLowerCase();
     const selected = all.filter(event => (filter === 'all' || event.kind === filter) && (!archive || ((!year || year.value === 'all' || event.date.startsWith(year.value)) && [event.id,event.title,event.organizer,event.departure,event.arrival].join(' ').toLocaleLowerCase().includes(query))));
     if (more) more.hidden = selected.length <= visible;
+    const signature=JSON.stringify([selected,filter,visible,window.EUROFEST_I18N?.locale,archive ? [] : selected.map(countdown)]);
+    if(gridSignature===signature)return;
+    gridSignature=signature;
     count.textContent = `${selected.length} / ${all.length}`;
     grid.replaceChildren(); grid.setAttribute('aria-busy', 'false');
     if (!selected.length) {
@@ -119,6 +123,8 @@
     document.getElementById('event-close').focus();
   }
   function renderDetail(event) {
+    const signature=JSON.stringify([event,window.EUROFEST_I18N?.locale]);
+    if(detailSignature===signature)return;detailSignature=signature;
     detail.replaceChildren();
     detail.append(el('span', 'micro-label', `${event.id} / ${event.kind === 'online' ? 'TRUCKERSMP' : 'EUROFEST'}`), el('h2', '', event.title));
     const day = el('p', 'detail-date', formatter.format(new Date(event.date + 'T12:00:00Z')) + ' · час за Києвом');
@@ -155,12 +161,12 @@
     const timeout = setTimeout(() => controller.abort(),10000);
     try {
       if (!api || !['http:','https:'].includes(api.protocol) || (location.protocol==='https:' && api.protocol!=='https:')) throw new Error('Invalid API configuration');
-      const response=await fetch(api.href,{signal:controller.signal,cache:'no-store',credentials:'omit',headers:{Accept:'application/json'}});
+      const response=await fetch(api.href,{signal:controller.signal,cache:'no-cache',credentials:'omit',headers:{Accept:'application/json'}});
       if(!response.ok)throw new Error(`API ${response.status}`);
       const payload=await response.json();
       if(payload.schema_version!==1 || !Array.isArray(payload.events))throw new Error('Unexpected API format');
       events=(archive ? payload.events : payload.events.slice(0,300)).map(normalize).filter(Boolean).sort((a,b)=>(a.date+(a.start_time||'23:59')).localeCompare(b.date+(b.start_time||'23:59')) * (archive ? -1 : 1));
-      if (year) { const previous=year.value; year.replaceChildren(); const option=el('option','','Усі роки');option.value='all';year.append(option); [...new Set(events.map(e=>e.date.slice(0,4)))].sort().reverse().forEach(value=>{const option=el('option','',value);option.value=value;year.append(option);});year.value=[...year.options].some(o=>o.value===previous)?previous:'all'; }
+      if (year && year.dataset.years!==JSON.stringify([...new Set(events.map(e=>e.date.slice(0,4)))].sort().reverse())) { year.dataset.years=JSON.stringify([...new Set(events.map(e=>e.date.slice(0,4)))].sort().reverse()); const previous=year.value; year.replaceChildren(); const option=el('option','','Усі роки');option.value='all';year.append(option); [...new Set(events.map(e=>e.date.slice(0,4)))].sort().reverse().forEach(value=>{const option=el('option','',value);option.value=value;year.append(option);});year.value=[...year.options].some(o=>o.value===previous)?previous:'all'; }
       loaded=true;render();
       status.textContent=`Оновлено о ${checkedFormatter.format(new Date())} · Київ`;status.classList.remove('events-warning');
       if(dialog.open){const event=liveEvents().find(event=>event.id===currentId);if(event)renderDetail(event);else close();}

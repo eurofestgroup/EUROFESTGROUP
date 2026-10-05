@@ -6,17 +6,20 @@
   <meta name="theme-color" content="#09090c">
   <meta name="description" content="EUROFEST GROUP — українська віртуальна транспортна компанія в Euro Truck Simulator 2. Спільні маршрути, конвої та команда, з якою хочеться їхати.">
   <title>EUROFEST GROUP — Твій шлях. Наша колона.</title>
+  <link rel="preload" as="image" href="assets/convoy.webp" fetchpriority="high">
   <link rel="icon" type="image/png" href="assets/favicon.png">
   <link rel="stylesheet" href="assets/style.css">
   <link rel="stylesheet" href="assets/glass.css?v=glass-restored-20261005">
   <link rel="stylesheet" href="assets/community.css?v=glass-restored-20261005">
   <script src="assets/config.js" defer></script>
-  <script src="assets/translations.js?v=archive-20261005" defer></script>
-  <script src="assets/i18n.js?v=archive-20261005" defer></script>
-  <script src="assets/app.js?v=photos-20261005" defer></script>
+  <script src="assets/translations.js?v=polish-20261005" defer></script>
+  <script src="assets/i18n.js?v=performance-20261005" defer></script>
+  <script src="assets/photo-cache.js?v=device-cache-20261005" defer></script>
+  <script src="assets/app.js?v=polish-20261005" defer></script>
   <link rel="stylesheet" href="assets/responsive.css?v=photos-20261005">
-  <script src="assets/gallery.js?v=archive-20261005" defer></script>
-  <script src="assets/community.js?v=photos-20261005" defer></script>
+  <script src="assets/gallery.js?v=performance-20261005" defer></script>
+  <script src="assets/community.js?v=polish-20261005" defer></script>
+  <link rel="stylesheet" href="assets/polish.css?v=polish-20261005">
 </head>
 <body>
   <a class="skip-link" href="#main">Перейти до вмісту</a>
@@ -59,7 +62,7 @@
       <div class="gallery-heading reveal"><div><h2 id="events-title">ПОДІЇ, ДЕ<br><span>БУДЕМО МИ.</span></h2><p id="events-subtitle">Знайди свій наступний рейс у колоні EUROFEST.</p></div><span class="gallery-signature">SEE YOU<br>ON THE ROAD.</span></div>
       <div class="gallery-toolbar"><div class="event-filters" role="group" aria-label="Категорія подій"><button type="button" data-event-filter="all" aria-pressed="true">Усі події</button><button type="button" data-event-filter="online" aria-pressed="false">TruckersMP</button><button type="button" data-event-filter="company" aria-pressed="false">Компанії</button></div><span class="events-count" id="events-count"></span></div>
       <div class="events-grid" id="events-grid" aria-busy="true"><div class="event-skeleton" aria-hidden="true"></div><div class="event-skeleton" aria-hidden="true"></div><div class="event-skeleton" aria-hidden="true"></div></div>
-      <div class="gallery-footer"><p id="events-status" role="status">Завантажуємо найближчі події…</p><button id="events-refresh" type="button">Оновити</button></div>
+      <div class="gallery-footer"><p id="events-status" role="status">Завантажуємо найближчі події…</p><div class="gallery-actions"><a class="text-link" href="archive.html">Архів подій ↗</a><button id="events-refresh" type="button">Оновити</button></div></div>
       <div class="community-card invite-event liquid-glass"><div><span class="micro-label">LET’S DRIVE TOGETHER</span><h3>Запросити нас на подію</h3><p id="invite-hint">Залиш запрошення в каналі подій нашого Discord.</p></div><a class="button button-red" data-invite-event href="https://discord.gg/qk5h7AK7Z4" target="_blank" rel="noopener noreferrer">Запросити EUROFEST ↗</a></div>
       <noscript><p>Для галереї потрібен JavaScript. Події також доступні в <a href="https://truckersmp.com/vtc/76299/events">TruckersMP</a> та Discord.</p></noscript>
     </section>
