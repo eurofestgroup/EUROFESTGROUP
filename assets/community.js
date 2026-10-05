@@ -34,13 +34,6 @@
     }
     return wrap;
   };
-  const stamp = value => {
-    if (!value) return '';
-    // TMP's date strings represent UTC even when no zone suffix is supplied.
-    const normalized = /(?:Z|[+-]\d\d:\d\d)$/i.test(value) ? value : value.replace(' ', 'T') + 'Z';
-    const date = new Date(normalized);
-    return Number.isNaN(date.getTime()) ? '' : new Intl.DateTimeFormat(window.EUROFEST_I18N?.locale || 'uk-UA', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Europe/Kyiv' }).format(date);
-  };
   const status = (key, state) => {
     const node = document.getElementById(`${key}-status`);
     const labels = { loading: 'Завантажуємо…', unavailable: 'Тимчасово не вдалося завантажити дані.', not_configured: 'Знайомся з командою в нашому Discord.', stale: 'Показуємо останні отримані дані. Оновлення тимчасово недоступне.' };
@@ -55,19 +48,7 @@
     status('profile', state);
   }
   function renderNews(state) {
-    const root = document.getElementById('news-grid'); root.replaceChildren(); root.setAttribute('aria-busy', 'false');
-    if (!state.data?.length) empty(root, state.data ? 'Нові історії EUROFEST незабаром з’являться тут.' : 'Публікації доступні на сторінці компанії у TruckersMP.');
-    (state.data || []).slice(0,12).forEach((item, i) => {
-      const card = el('article', `community-card news-card liquid-glass${i === 0 ? ' news-featured' : ''}`);
-      const meta = el('div', 'news-meta');
-      meta.append(el('span', '', item.pinned ? 'ЗАКРІПЛЕНО' : 'EUROFEST JOURNAL'), el('span', '', stamp(item.published_at)));
-      const title = el('h3'); title.setAttribute('data-no-i18n', ''); title.append(link(item.title, item.url, 'news-title'));
-      card.append(meta, title, el('p', 'news-summary', item.summary || 'Читайте повну публікацію на TruckersMP.'));
-      if (item.summary) card.querySelector('.news-summary').setAttribute('data-no-i18n', '');
-      const foot = el('div', 'news-foot'); foot.append(el('span', '', item.author || 'EUROFEST GROUP'), link('Читати новину ↗', item.url));
-      card.append(foot); root.append(card);
-    });
-    status('news', state);
+    window.EUROFEST_NEWS.renderPreview(state);
   }
   function renderTeam(state) {
     const root = document.getElementById('team-grid'); root.replaceChildren(); root.setAttribute('aria-busy', 'false');

@@ -205,3 +205,24 @@ window.EUROFEST_TRANSLATIONS = {
 Object.assign(window.EUROFEST_TRANSLATIONS, {"Архів подій": "Event archive", "EUROFEST GROUP — Архів подій": "EUROFEST GROUP — Event archive", "Архів минулих конвоїв і подій EUROFEST GROUP.": "Past convoys and events of EUROFEST GROUP.", "АРХІВ / НАШІ МАРШРУТИ": "ARCHIVE / OUR ROUTES", "МАРШРУТИ,": "ROUTES,", "ЩО ВЖЕ ПОЗАДУ.": "ALREADY BEHIND US.", "Минулі події з календаря EUROFEST. Дата завершення не підтверджує фактичну участь.": "Past events from the EUROFEST calendar. The end date does not confirm actual attendance.", "Пошук подій": "Search events", "Назва, організатор або маршрут": "Name, organiser or route", "Рік": "Year", "Усі роки": "All years", "Завантажуємо архів подій…": "Loading the event archive…", "Минула подія": "Past event", "Минулих подій за цим запитом немає.": "No past events match your search.", "Архів показує збережені в БД події після їх завершення.": "The archive shows past events retained in the database.", "Архів тимчасово недоступний. Спробуй оновити пізніше.": "The archive is temporarily unavailable. Please try again later.", "Архів тимчасово недоступний.": "The archive is temporarily unavailable."});
 
 Object.assign(window.EUROFEST_TRANSLATIONS,{"Архів подій ↗": "Event archive ↗"});
+
+Object.assign(window.EUROFEST_TRANSLATIONS, {
+  "Переглянути всі події →": "View all events →",
+  "Усі новини →": "All news →",
+  "EUROFEST GROUP — Усі події": "EUROFEST GROUP — All events",
+  "Усі майбутні події та конвої EUROFEST GROUP.": "All upcoming EUROFEST GROUP events and convoys.",
+  "КАЛЕНДАР / УСІ ПОДІЇ": "CALENDAR / ALL EVENTS",
+  "Подій за цим запитом немає.": "No events match your search.",
+  "До головної": "Back to home",
+  "EUROFEST GROUP — Усі новини": "EUROFEST GROUP — All news",
+  "Новини, історії та публікації EUROFEST GROUP.": "EUROFEST GROUP news, stories and publications.",
+  "ЖУРНАЛ / УСІ НОВИНИ": "JOURNAL / ALL NEWS",
+  "Пошук новин": "Search news",
+  "Заголовок, автор або текст": "Title, author or text",
+  "Сторінки новин": "News pages",
+  "← Назад": "← Previous",
+  "Далі →": "Next →",
+  "Новин за цим запитом немає.": "No news matches your search.",
+  "Оновити новини": "Refresh news",
+  "Для перегляду новин увімкни JavaScript.": "Enable JavaScript to view news."
+});

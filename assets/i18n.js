@@ -21,7 +21,9 @@
         [/^Маршрут: (.+)$/, (_, title) => `Route: ${title}`],
         [/^Слот: (.+)$/, (_, title) => `Slot: ${title}`],
         [/^Фото: (\d+)$/, (_, n) => `Photos: ${n}`],
-        [/^Показано (\d+) із (\d+)$/, (_, n, total) => `Showing ${n} of ${total}`]
+        [/^Показано (\d+) із (\d+)$/, (_, n, total) => `Showing ${n} of ${total}`],
+        [/^Показано (\d+)–(\d+) із (\d+)$/, (_, first, last, total) => `Showing ${first}–${last} of ${total}`],
+        [/^Сторінка (\d+) із (\d+)$/, (_, n, total) => `Page ${n} of ${total}`]
       ];
       for (const [pattern, replace] of patterns) if (pattern.test(core)) { text = core.replace(pattern, replace); break; }
     }
@@ -54,7 +56,7 @@
       if (!raw || raw.startsWith('#')) return;
       try {
         const url = new URL(raw, location.href);
-        if (url.origin === location.origin && /\/(?:index|photos|archive)\.html$/.test(url.pathname)) {
+        if (url.origin === location.origin && /\/(?:index|photos|archive|events|news)\.html$/.test(url.pathname)) {
           url.searchParams.set('lang', language);
           anchor.setAttribute('href', url.pathname + url.search + url.hash);
         }

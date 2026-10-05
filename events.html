@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#09090c">
-  <meta name="description" content="Архів минулих конвоїв і подій EUROFEST GROUP.">
-  <title>EUROFEST GROUP — Архів подій</title>
+  <meta name="description" content="Усі майбутні події та конвої EUROFEST GROUP.">
+  <title>EUROFEST GROUP — Усі події</title>
   <link rel="icon" type="image/png" href="assets/favicon.png">
   <link rel="stylesheet" href="assets/style.css">
   <link rel="stylesheet" href="assets/glass.css?v=glass-restored-20261005">
@@ -26,21 +26,21 @@
   <div class="scroll-progress" aria-hidden="true"></div>
   <header class="header">
     <a class="brand" href="index.html#top" aria-label="EUROFEST GROUP — головна"><img class="brand-logo" src="assets/logo.webp" alt="" width="50" height="50"><span class="brand-name">EUROFEST <b>GROUP</b></span></a>
-    <nav class="nav" id="navigation" aria-label="Основна навігація"><a href="index.html#about">Про нас</a><a href="events.html">Події</a><a href="news.html">Новини</a><a href="index.html#team">Команда</a><a href="archive.html" aria-current="page">Архів подій</a><a href="photos.html">Фото з подій</a><a href="index.html#join">Приєднатися</a></nav>
+    <nav class="nav" id="navigation" aria-label="Основна навігація"><a href="index.html#about">Про нас</a><a href="events.html" aria-current="page">Події</a><a href="news.html">Новини</a><a href="index.html#team">Команда</a><a href="archive.html">Архів подій</a><a href="photos.html">Фото з подій</a><a href="index.html#join">Приєднатися</a></nav>
     <div class="language-switch" role="group" aria-label="Мова сайту"><button type="button" data-language="uk" aria-pressed="true" lang="uk">UA</button><button type="button" data-language="en" aria-pressed="false" lang="en">EN</button></div>
     <a class="nav-discord" data-link="discord" href="https://discord.gg/qk5h7AK7Z4" target="_blank" rel="noopener noreferrer">Наш Discord</a>
     <button class="menu-button" aria-controls="navigation" aria-expanded="false" aria-label="Відкрити меню"><span></span><span></span></button>
   </header>
   <main id="main" class="container photos-main">
-    <section class="event-gallery" data-event-archive="true" id="events" aria-labelledby="events-title">
-      <div class="section-label reveal"><span>АРХІВ / НАШІ МАРШРУТИ</span><span>EUROFEST × СПІЛЬНОТА</span></div>
-      <div class="gallery-heading reveal"><div><h1 id="events-title">МАРШРУТИ,<br><span>ЩО ВЖЕ ПОЗАДУ.</span></h1><p id="events-subtitle">Минулі події з календаря EUROFEST. Дата завершення не підтверджує фактичну участь.</p></div><span class="gallery-signature">SEE YOU<br>ON THE ROAD.</span></div>
+    <section class="event-gallery" data-event-list="true" id="events" aria-labelledby="events-title">
+      <div class="section-label reveal"><span>КАЛЕНДАР / УСІ ПОДІЇ</span><span>EUROFEST × СПІЛЬНОТА</span></div>
+      <div class="gallery-heading reveal"><div><h1 id="events-title">ПОДІЇ, ДЕ<br><span>БУДЕМО МИ.</span></h1><p id="events-subtitle">Знайди свій наступний рейс у колоні EUROFEST.</p></div><span class="gallery-signature">SEE YOU<br>ON THE ROAD.</span></div>
       <div class="gallery-toolbar"><div class="event-filters" role="group" aria-label="Категорія подій"><button type="button" data-event-filter="all" aria-pressed="true">Усі події</button><button type="button" data-event-filter="online" aria-pressed="false">TruckersMP</button><button type="button" data-event-filter="company" aria-pressed="false">Компанії</button></div><span class="events-count" id="events-count"></span></div>
       <div class="archive-controls"><label for="archive-search">Пошук подій</label><input id="archive-search" type="search" placeholder="Назва, організатор або маршрут"><label for="archive-year">Рік</label><select id="archive-year"><option value="all">Усі роки</option></select></div>
       <div class="events-grid" id="events-grid" aria-busy="true"><div class="event-skeleton" aria-hidden="true"></div><div class="event-skeleton" aria-hidden="true"></div><div class="event-skeleton" aria-hidden="true"></div></div>
-      <div class="gallery-footer"><p id="events-status" role="status">Завантажуємо архів подій…</p><div class="gallery-actions"><a class="text-link" href="events.html">До календаря подій</a><button id="events-refresh" type="button">Оновити</button></div></div>
+      <div class="gallery-footer"><p id="events-status" role="status">Завантажуємо найближчі події…</p><div class="gallery-actions"><a class="text-link" href="archive.html">Архів подій ↗</a><a class="text-link" href="index.html#events">До головної</a><button id="events-refresh" type="button">Оновити</button></div></div>
     </section>
-<div class="photos-more"><button id="events-more" class="button button-glass" type="button" hidden>Показати ще</button></div>
+    <div class="photos-more"><button id="events-more" class="button button-glass" type="button" hidden>Показати ще</button></div>
   </main>
   <dialog id="event-dialog" class="event-dialog" aria-label="Деталі конвою"><button id="event-close" class="event-close" type="button" aria-label="Закрити деталі">×</button><div id="event-detail"></div></dialog>
   <footer class="footer container"><a class="brand" href="#top"><img class="brand-logo" src="assets/logo.webp" alt="" width="50" height="50"><span class="brand-name">EUROFEST <b>GROUP</b></span></a><div class="footer-copy">© <span id="year">2026</span> EUROFEST GROUP.<span>Віртуальна транспортна компанія · Україна</span></div><button class="effects-toggle" type="button" aria-pressed="true">Ефекти: увімкнено</button><a class="back-top" href="#top">Нагору</a></footer>

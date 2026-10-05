@@ -2,6 +2,7 @@
   'use strict';
   const container = document.querySelector('.event-gallery');
   const archive = container?.dataset.eventArchive === 'true';
+  const fullList = container?.dataset.eventList === 'true';
   const search = document.getElementById('archive-search');
   const year = document.getElementById('archive-year');
   const more = document.getElementById('events-more');
@@ -102,19 +103,20 @@
   function render() {
     const all = liveEvents();
     const query = (search?.value || '').trim().toLocaleLowerCase();
-    const selected = all.filter(event => (filter === 'all' || event.kind === filter) && (!archive || ((!year || year.value === 'all' || event.date.startsWith(year.value)) && [event.id,event.title,event.organizer,event.departure,event.arrival].join(' ').toLocaleLowerCase().includes(query))));
+    const selected = all.filter(event => (filter === 'all' || event.kind === filter) && (!(archive || fullList) || ((!year || year.value === 'all' || event.date.startsWith(year.value)) && [event.id,event.title,event.organizer,event.departure,event.arrival].join(' ').toLocaleLowerCase().includes(query))));
+    const shown = selected.slice(0, archive || fullList ? visible : 6);
     if (more) more.hidden = selected.length <= visible;
-    const signature=JSON.stringify([selected,filter,visible,window.EUROFEST_I18N?.locale,archive ? [] : selected.map(countdown)]);
+    const signature=JSON.stringify([shown,selected.length,all.length,filter,window.EUROFEST_I18N?.locale,archive ? [] : shown.map(countdown)]);
     if(gridSignature===signature)return;
     gridSignature=signature;
-    count.textContent = `${selected.length} / ${all.length}`;
+    count.textContent = archive ? `${selected.length} / ${all.length}` : `Показано ${shown.length} із ${selected.length}`;
     grid.replaceChildren(); grid.setAttribute('aria-busy', 'false');
     if (!selected.length) {
       const empty = el('div', 'events-empty');
-      empty.append(el('span', 'micro-label', 'НА ДОРОЗІ ЗУСТРІНЕМОСЯ'), el('h3', '', archive ? 'Минулих подій за цим запитом немає.' : all.length ? 'У цій категорії ще немає подій.' : 'Нові маршрути вже попереду.'), el('p', '', archive ? 'Архів показує збережені в БД події після їх завершення.' : 'Актуальні оголошення та спільні рейси шукай у Discord.'));
+      empty.append(el('span', 'micro-label', 'НА ДОРОЗІ ЗУСТРІНЕМОСЯ'), el('h3', '', archive ? 'Минулих подій за цим запитом немає.' : fullList && (query || (year && year.value !== 'all')) ? 'Подій за цим запитом немає.' : all.length ? 'У цій категорії ще немає подій.' : 'Нові маршрути вже попереду.'), el('p', '', archive ? 'Архів показує збережені в БД події після їх завершення.' : 'Актуальні оголошення та спільні рейси шукай у Discord.'));
       empty.append(link('Наш Discord', 'https://discord.gg/qk5h7AK7Z4'));
       grid.append(empty);
-    } else selected.slice(0, archive ? visible : selected.length).forEach((event, index) => grid.append(createCard(event, index)));
+    } else shown.forEach((event, index) => grid.append(createCard(event, index)));
     filters.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.eventFilter === filter)));
   }
   function openEvent(event, button) {
@@ -165,7 +167,7 @@
       if(!response.ok)throw new Error(`API ${response.status}`);
       const payload=await response.json();
       if(payload.schema_version!==1 || !Array.isArray(payload.events))throw new Error('Unexpected API format');
-      events=(archive ? payload.events : payload.events.slice(0,300)).map(normalize).filter(Boolean).sort((a,b)=>(a.date+(a.start_time||'23:59')).localeCompare(b.date+(b.start_time||'23:59')) * (archive ? -1 : 1));
+      events=payload.events.map(normalize).filter(Boolean).sort((a,b)=>(a.date+(a.start_time||'23:59')).localeCompare(b.date+(b.start_time||'23:59')) * (archive ? -1 : 1));
       if (year && year.dataset.years!==JSON.stringify([...new Set(events.map(e=>e.date.slice(0,4)))].sort().reverse())) { year.dataset.years=JSON.stringify([...new Set(events.map(e=>e.date.slice(0,4)))].sort().reverse()); const previous=year.value; year.replaceChildren(); const option=el('option','','Усі роки');option.value='all';year.append(option); [...new Set(events.map(e=>e.date.slice(0,4)))].sort().reverse().forEach(value=>{const option=el('option','',value);option.value=value;year.append(option);});year.value=[...year.options].some(o=>o.value===previous)?previous:'all'; }
       loaded=true;render();
       status.textContent=`Оновлено о ${checkedFormatter.format(new Date())} · Київ`;status.classList.remove('events-warning');
