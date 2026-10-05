@@ -3,6 +3,8 @@
   const container = document.querySelector('.event-gallery');
   const archive = container?.dataset.eventArchive === 'true';
   const fullList = container?.dataset.eventList === 'true';
+  const preview = !archive && !fullList;
+  const PREVIEW_LIMIT = 6;
   const search = document.getElementById('archive-search');
   const year = document.getElementById('archive-year');
   const more = document.getElementById('events-more');
@@ -17,9 +19,16 @@
   const config = window.EUROFEST_CONFIG || {};
   const defaultCover = new URL('assets/convoy.webp', document.baseURI).href;
   let api;
-  try { api = new URL(config.apiUrl || '/api/events', location.href); if (archive) api.pathname = api.pathname.replace(/\/events\/?$/, '/archive'); } catch (_) { api = null; }
+  try {
+    api = new URL(config.apiUrl || '/api/events', location.href);
+    if (archive) api.pathname = api.pathname.replace(/\/events\/?$/, '/archive');
+    if (fullList) api.searchParams.set('all', '1');
+    else api.searchParams.delete('all');
+    api.searchParams.delete('kind');
+  } catch (_) { api = null; }
   let gridSignature='', detailSignature='';
   let events = [], filter = 'all', loaded = false, fetching = false, currentId = '', trigger = null;
+  let previewTotal = 0, loadedFilter = 'all';
   let formatter = new Intl.DateTimeFormat(window.EUROFEST_I18N?.locale || 'uk-UA', { timeZone: 'Europe/Kyiv', day: 'numeric', month: 'long', year: 'numeric' });
   let monthFormatter = new Intl.DateTimeFormat(window.EUROFEST_I18N?.locale || 'uk-UA', { timeZone: 'Europe/Kyiv', month: 'short' });
   let checkedFormatter = new Intl.DateTimeFormat(window.EUROFEST_I18N?.locale || 'uk-UA', { timeZone: 'Europe/Kyiv', hour: '2-digit', minute: '2-digit' });
@@ -104,12 +113,13 @@
     const all = liveEvents();
     const query = (search?.value || '').trim().toLocaleLowerCase();
     const selected = all.filter(event => (filter === 'all' || event.kind === filter) && (!(archive || fullList) || ((!year || year.value === 'all' || event.date.startsWith(year.value)) && [event.id,event.title,event.organizer,event.departure,event.arrival].join(' ').toLocaleLowerCase().includes(query))));
-    const shown = selected.slice(0, archive || fullList ? visible : 6);
+    const shown = fullList ? selected : selected.slice(0, archive ? visible : PREVIEW_LIMIT);
+    const total = preview && loadedFilter === filter ? previewTotal : selected.length;
     if (more) more.hidden = selected.length <= visible;
-    const signature=JSON.stringify([shown,selected.length,all.length,filter,window.EUROFEST_I18N?.locale,archive ? [] : shown.map(countdown)]);
+    const signature=JSON.stringify([shown,total,selected.length,all.length,filter,window.EUROFEST_I18N?.locale,archive ? [] : shown.map(countdown)]);
     if(gridSignature===signature)return;
     gridSignature=signature;
-    count.textContent = archive ? `${selected.length} / ${all.length}` : `Показано ${shown.length} із ${selected.length}`;
+    count.textContent = archive ? `${selected.length} / ${all.length}` : `Показано ${shown.length} із ${total}`;
     grid.replaceChildren(); grid.setAttribute('aria-busy', 'false');
     if (!selected.length) {
       const empty = el('div', 'events-empty');
@@ -155,19 +165,34 @@
   document.getElementById('event-close').addEventListener('click',close);
   dialog.addEventListener('click', event => { if (event.target === dialog) { const box = dialog.getBoundingClientRect(); if (event.clientX < box.left || event.clientX > box.right || event.clientY < box.top || event.clientY > box.bottom) close(); } });
   dialog.addEventListener('close', () => { currentId='';document.body.classList.remove('dialog-open');if (trigger?.isConnected) trigger.focus(); });
-  filters.forEach(button => button.addEventListener('click', () => { filter=button.dataset.eventFilter;visible=24; if(loaded)render(); }));
+  filters.forEach(button => button.addEventListener('click', () => {
+    filter=button.dataset.eventFilter;visible=24;
+    filters.forEach(item => item.setAttribute('aria-pressed', String(item === button)));
+    if (preview) loadEvents();
+    else if (loaded) render();
+  }));
   async function loadEvents() {
     if (fetching) return;
     fetching=true;refresh.disabled=true;
+    const requestedFilter = filter;
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(),10000);
     try {
       if (!api || !['http:','https:'].includes(api.protocol) || (location.protocol==='https:' && api.protocol!=='https:')) throw new Error('Invalid API configuration');
-      const response=await fetch(api.href,{signal:controller.signal,cache:'no-cache',credentials:'omit',headers:{Accept:'application/json'}});
+      const requestUrl = new URL(api.href);
+      if (preview && requestedFilter !== 'all') requestUrl.searchParams.set('kind', requestedFilter);
+      const response=await fetch(requestUrl.href,{signal:controller.signal,cache:'no-cache',credentials:'omit',headers:{Accept:'application/json'}});
       if(!response.ok)throw new Error(`API ${response.status}`);
       const payload=await response.json();
       if(payload.schema_version!==1 || !Array.isArray(payload.events))throw new Error('Unexpected API format');
-      events=payload.events.map(normalize).filter(Boolean).sort((a,b)=>(a.date+(a.start_time||'23:59')).localeCompare(b.date+(b.start_time||'23:59')) * (archive ? -1 : 1));
+      if (preview && requestedFilter !== filter) return;
+      const received = payload.events.map(normalize).filter(Boolean).sort((a,b)=>(a.date+(a.start_time||'23:59')).localeCompare(b.date+(b.start_time||'23:59')) * (archive ? -1 : 1));
+      if (preview) {
+        const eligible = received.filter(event => validDate(event.end_at)?.getTime() > Date.now() && (requestedFilter === 'all' || event.kind === requestedFilter));
+        previewTotal = Number.isInteger(payload.total) && payload.total >= eligible.length ? payload.total : eligible.length;
+        events = eligible.slice(0, PREVIEW_LIMIT);
+        loadedFilter = requestedFilter;
+      } else events = received;
       if (year && year.dataset.years!==JSON.stringify([...new Set(events.map(e=>e.date.slice(0,4)))].sort().reverse())) { year.dataset.years=JSON.stringify([...new Set(events.map(e=>e.date.slice(0,4)))].sort().reverse()); const previous=year.value; year.replaceChildren(); const option=el('option','','Усі роки');option.value='all';year.append(option); [...new Set(events.map(e=>e.date.slice(0,4)))].sort().reverse().forEach(value=>{const option=el('option','',value);option.value=value;year.append(option);});year.value=[...year.options].some(o=>o.value===previous)?previous:'all'; }
       loaded=true;render();
       status.textContent=`Оновлено о ${checkedFormatter.format(new Date())} · Київ`;status.classList.remove('events-warning');
@@ -176,7 +201,10 @@
       status.textContent=loaded ? 'Зв’язок тимчасово перервано. Показуємо останні отримані дані.' : archive ? 'Архів тимчасово недоступний. Спробуй оновити пізніше.' : 'Розклад тимчасово недоступний. Оголошення — у Discord.';
       status.classList.add('events-warning');
       if(!loaded){grid.setAttribute('aria-busy','false');grid.replaceChildren();const unavailable=el('div','events-empty');unavailable.append(el('span','micro-label','EUROFEST / КАЛЕНДАР'),el('h3','',archive ? 'Архів тимчасово недоступний.' : 'Точка збору — наш Discord.'),el('p','','Завітай до оголошень компанії, щоб дізнатися про наступний конвой.'));unavailable.append(link('Переглянути оголошення','https://discord.gg/qk5h7AK7Z4'));grid.append(unavailable);count.textContent='';}
-    } finally{clearTimeout(timeout);fetching=false;refresh.disabled=false;}
+    } finally{
+      clearTimeout(timeout);fetching=false;refresh.disabled=false;
+      if (preview && requestedFilter !== filter) loadEvents();
+    }
   }
   search?.addEventListener('input',()=>{visible=24;if(loaded)render();});
   year?.addEventListener('change',()=>{visible=24;if(loaded)render();});
