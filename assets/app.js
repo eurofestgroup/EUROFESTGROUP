@@ -40,7 +40,7 @@
   reduceMotion.addEventListener('change', () => { if (!explicitPreference) { effects = !reduceMotion.matches; updateEffects(); } });
   updateEffects();
   document.querySelectorAll('.principle, .convoy-panel, .join-card').forEach(card => card.classList.add('glass-surface'));
-  const glassSelector = '.header, .nav-discord, .button, .principle, .convoy-panel, .join-card, .event-filters, .event-filters button, .event-card, .event-date, .event-open, .events-empty, .event-dialog, .event-close, .effects-toggle, .faq details';
+  const glassSelector = '.community-card, .header, .nav-discord, .button, .principle, .convoy-panel, .join-card, .event-filters, .event-filters button, .event-card, .event-date, .event-open, .events-empty, .event-dialog, .event-close, .effects-toggle, .faq details';
   const decorateGlass = root => {
     if (root.matches?.(glassSelector)) root.classList.add('liquid-glass');
     root.querySelectorAll(glassSelector).forEach(surface => surface.classList.add('liquid-glass'));
