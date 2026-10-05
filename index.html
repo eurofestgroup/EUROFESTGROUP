@@ -12,14 +12,15 @@
   <link rel="stylesheet" href="assets/glass.css?v=glass-restored-20261005">
   <link rel="stylesheet" href="assets/community.css?v=glass-restored-20261005">
   <script src="assets/config.js" defer></script>
-  <script src="assets/translations.js?v=lists-20261005" defer></script>
+  <script src="assets/translations.js?v=preview-6-20261005" defer></script>
   <script src="assets/i18n.js?v=lists-20261005" defer></script>
   <script src="assets/photo-cache.js?v=device-cache-20261005" defer></script>
   <script src="assets/app.js?v=polish-20261005" defer></script>
   <link rel="stylesheet" href="assets/responsive.css?v=photos-20261005">
-  <script src="assets/gallery.js?v=lists-20261005" defer></script>
-  <script src="assets/news.js?v=lists-20261005" defer></script>
+  <script src="assets/gallery.js?v=preview-6-20261005" defer></script>
+  <script src="assets/news.js?v=preview-6-20261005" defer></script>
   <script src="assets/community.js?v=lists-20261005" defer></script>
+  <link rel="stylesheet" href="assets/lists.css?v=preview-6-20261005">
   <link rel="stylesheet" href="assets/polish.css?v=polish-20261005">
 </head>
 <body>
@@ -63,15 +64,18 @@
       <div class="gallery-heading reveal"><div><h2 id="events-title">ПОДІЇ, ДЕ<br><span>БУДЕМО МИ.</span></h2><p id="events-subtitle">Знайди свій наступний рейс у колоні EUROFEST.</p></div><span class="gallery-signature">SEE YOU<br>ON THE ROAD.</span></div>
       <div class="gallery-toolbar"><div class="event-filters" role="group" aria-label="Категорія подій"><button type="button" data-event-filter="all" aria-pressed="true">Усі події</button><button type="button" data-event-filter="online" aria-pressed="false">TruckersMP</button><button type="button" data-event-filter="company" aria-pressed="false">Компанії</button></div><span class="events-count" id="events-count"></span></div>
       <div class="events-grid" id="events-grid" aria-busy="true"><div class="event-skeleton" aria-hidden="true"></div><div class="event-skeleton" aria-hidden="true"></div><div class="event-skeleton" aria-hidden="true"></div></div>
-      <div class="gallery-footer"><p id="events-status" role="status">Завантажуємо найближчі події…</p><div class="gallery-actions"><a class="button button-glass" href="events.html">Переглянути всі події →</a><a class="text-link" href="archive.html">Архів подій ↗</a><button id="events-refresh" type="button">Оновити</button></div></div>
+      <div class="preview-actions"><a id="events-all" class="button button-glass" href="events.html">Переглянути всі події →</a></div>
+      <div class="gallery-footer"><p id="events-status" role="status">Завантажуємо найближчі події…</p><div class="gallery-actions"><a class="text-link" href="archive.html">Архів подій ↗</a><button id="events-refresh" type="button">Оновити</button></div></div>
       <div class="community-card invite-event liquid-glass"><div><span class="micro-label">LET’S DRIVE TOGETHER</span><h3>Запросити нас на подію</h3><p id="invite-hint">Залиш запрошення в каналі подій нашого Discord.</p></div><a class="button button-red" data-invite-event href="https://discord.gg/qk5h7AK7Z4" target="_blank" rel="noopener noreferrer">Запросити EUROFEST ↗</a></div>
       <noscript><p>Для галереї потрібен JavaScript. Події також доступні в <a href="https://truckersmp.com/vtc/76299/events">TruckersMP</a> та Discord.</p></noscript>
     </section>
     <section class="section container" id="news" aria-labelledby="news-title">
       <div class="section-label reveal"><span>03 / ЖИТТЯ КОМПАНІЇ</span><span>EUROFEST JOURNAL</span></div>
       <div class="community-intro reveal"><h2 id="news-title">НАШ РУХ.<br><span>НАШІ НОВИНИ.</span></h2><p>Події, люди й моменти, які стають історією EUROFEST.</p></div>
-      <div class="news-grid" id="news-grid" aria-busy="true"><p class="community-empty">Завантажуємо новини…</p></div><p class="community-status" id="news-status" role="status"></p>
-      <div class="community-footer"><a class="button button-glass" href="news.html">Усі новини →</a><button id="community-refresh" type="button">Оновити дані</button></div>
+      <div class="news-grid" id="news-grid" aria-busy="true"><p class="community-empty">Завантажуємо новини…</p></div>
+      <div class="preview-actions"><a id="news-all" class="button button-glass" href="news.html">Переглянути всі новини →</a></div>
+      <p class="community-status" id="news-status" role="status"></p>
+      <div class="community-footer"><button id="community-refresh" type="button">Оновити дані</button></div>
     </section>
     <section class="section container" id="team" aria-labelledby="team-title">
       <div class="section-label reveal"><span>04 / НАША КОМАНДА</span><span>PEOPLE BEHIND EUROFEST</span></div>

@@ -208,6 +208,7 @@ Object.assign(window.EUROFEST_TRANSLATIONS,{"Архів подій ↗": "Event 
 
 Object.assign(window.EUROFEST_TRANSLATIONS, {
   "Переглянути всі події →": "View all events →",
+  "Переглянути всі новини →": "View all news →",
   "Усі новини →": "All news →",
   "EUROFEST GROUP — Усі події": "EUROFEST GROUP — All events",
   "Усі майбутні події та конвої EUROFEST GROUP.": "All upcoming EUROFEST GROUP events and convoys.",
