@@ -39,12 +39,12 @@
     // TMP's date strings represent UTC even when no zone suffix is supplied.
     const normalized = /(?:Z|[+-]\d\d:\d\d)$/i.test(value) ? value : value.replace(' ', 'T') + 'Z';
     const date = new Date(normalized);
-    return Number.isNaN(date.getTime()) ? '' : new Intl.DateTimeFormat('uk-UA', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Europe/Kyiv' }).format(date);
+    return Number.isNaN(date.getTime()) ? '' : new Intl.DateTimeFormat(window.EUROFEST_I18N?.locale || 'uk-UA', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Europe/Kyiv' }).format(date);
   };
   const status = (key, state) => {
     const node = document.getElementById(`${key}-status`);
     const labels = { loading: 'Завантажуємо…', unavailable: 'Тимчасово не вдалося завантажити дані.', not_configured: 'Знайомся з командою в нашому Discord.', stale: 'Показуємо останні отримані дані. Оновлення тимчасово недоступне.' };
-    node.textContent = labels[state.status] || (state.updated_at ? `Оновлено ${new Date(state.updated_at).toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Kyiv' })} · Київ` : '');
+    node.textContent = labels[state.status] || (state.updated_at ? `Оновлено ${new Date(state.updated_at).toLocaleTimeString(window.EUROFEST_I18N?.locale || 'uk-UA', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Kyiv' })} · Київ` : '');
   };
   const empty = (root, text) => root.append(el('p', 'community-empty', text));
   function renderProfile(state) {
@@ -61,8 +61,9 @@
       const card = el('article', `community-card news-card liquid-glass${i === 0 ? ' news-featured' : ''}`);
       const meta = el('div', 'news-meta');
       meta.append(el('span', '', item.pinned ? 'ЗАКРІПЛЕНО' : 'EUROFEST JOURNAL'), el('span', '', stamp(item.published_at)));
-      const title = el('h3'); title.append(link(item.title, item.url, 'news-title'));
+      const title = el('h3'); title.setAttribute('data-no-i18n', ''); title.append(link(item.title, item.url, 'news-title'));
       card.append(meta, title, el('p', 'news-summary', item.summary || 'Читайте повну публікацію на TruckersMP.'));
+      if (item.summary) card.querySelector('.news-summary').setAttribute('data-no-i18n', '');
       const foot = el('div', 'news-foot'); foot.append(el('span', '', item.author || 'EUROFEST GROUP'), link('Читати новину ↗', item.url));
       card.append(foot); root.append(card);
     });
@@ -80,6 +81,7 @@
         const card = el('article', 'community-card person-card liquid-glass ' + (tier === 'founder' ? 'founder-card' : ''));
         card.append(picture(person.avatar, person.name, 'person-avatar'));
         const copy = el('div', 'person-copy'); copy.append(el('span', 'person-role', labels[tier]), el('h4', '', person.name), link('Профіль Discord ↗', person.url));
+        copy.querySelector('h4').setAttribute('data-no-i18n', '');
         card.append(copy); list.append(card);
       });
       group.append(list); root.append(group);
@@ -92,6 +94,7 @@
     (state.data || []).forEach(partner => {
       const card = link('', partner.url, 'community-card partner-card liquid-glass');
       card.append(picture(partner.logo, partner.name, 'partner-logo'), el('h3', '', partner.name), el('span', 'partner-arrow', '↗'));
+      card.querySelector('h3').setAttribute('data-no-i18n', '');
       root.append(card);
     });
     status('partners', state);
@@ -119,14 +122,17 @@
       const missing = { status: 'unavailable', data: null };
       if (!last) { renderProfile(missing); renderNews(missing); renderTeam(missing); renderPartners(missing); }
       else {
-        for (const key of ['profile', 'news', 'team', 'partners']) status(key, { status: 'stale' });
+        for (const key of ['profile', 'news', 'team', 'partners']) { last.data[key].status = last.data[key].data === null ? 'unavailable' : 'stale'; status(key, last.data[key]); }
         const teamTime = Date.parse(last.data.team.updated_at || '') || last.received;
-        if (Date.now() - teamTime > 900000) renderTeam(missing);
+        if (Date.now() - teamTime > 900000) { last.data.team = missing; renderTeam(missing); }
       }
     } finally { clearTimeout(timeout); busy = false; }
   }
   document.getElementById('community-refresh').addEventListener('click', refresh);
   document.addEventListener('visibilitychange', () => { if (!document.hidden) refresh(); });
+  document.addEventListener('eurofest:language', () => {
+    if (last) { renderProfile(last.data.profile); renderNews(last.data.news); renderTeam(last.data.team); renderPartners(last.data.partners); }
+  });
   refresh();
   setInterval(() => { if (!document.hidden) refresh(); }, 60000);
 })();

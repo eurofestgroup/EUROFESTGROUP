@@ -17,7 +17,7 @@
     if (event.key === 'Escape' && menu.getAttribute('aria-expanded') === 'true') { setMenu(false); menu.focus(); }
   });
   document.addEventListener('click', event => { if (!event.target.closest('.header')) setMenu(false); });
-  const mobile = window.matchMedia('(max-width: 760px)');
+  const mobile = window.matchMedia('(max-width: 1100px)');
   mobile.addEventListener('change', () => setMenu(false));
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const toggle = document.querySelector('.effects-toggle');
@@ -40,7 +40,7 @@
   reduceMotion.addEventListener('change', () => { if (!explicitPreference) { effects = !reduceMotion.matches; updateEffects(); } });
   updateEffects();
   document.querySelectorAll('.principle, .convoy-panel, .join-card').forEach(card => card.classList.add('glass-surface'));
-  const glassSelector = '.community-card, .header, .nav-discord, .button, .principle, .convoy-panel, .join-card, .event-filters, .event-filters button, .event-card, .event-date, .event-open, .events-empty, .event-dialog, .event-close, .effects-toggle, .faq details';
+  const glassSelector = '.photo-card, .community-card, .header, .nav-discord, .button, .principle, .convoy-panel, .join-card, .event-filters, .event-filters button, .event-card, .event-date, .event-open, .events-empty, .event-dialog, .event-close, .effects-toggle, .faq details';
   const decorateGlass = root => {
     if (root.matches?.(glassSelector)) root.classList.add('liquid-glass');
     root.querySelectorAll(glassSelector).forEach(surface => surface.classList.add('liquid-glass'));
@@ -66,7 +66,7 @@
     litSurface = glowTarget = glowPoint = null;
   };
   document.addEventListener('pointermove', event => {
-    if (!effects || reduceMotion.matches || document.hidden || event.pointerType !== 'mouse') {
+    if (!effects || reduceMotion.matches || document.hidden || !window.matchMedia('(hover: hover) and (pointer: fine)').matches || event.pointerType !== 'mouse') {
       clearGlassLight(); return;
     }
     const surface = event.target.closest?.(glassSelector);

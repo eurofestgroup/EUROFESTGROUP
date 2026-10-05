@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#09090c">
+  <meta name="description" content="Фотографії з конвоїв і подій EUROFEST GROUP.">
+  <title>EUROFEST GROUP — Фото з подій</title>
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link rel="stylesheet" href="assets/style.css">
+  <link rel="stylesheet" href="assets/glass.css?v=glass-restored-20261005">
+  <link rel="stylesheet" href="assets/community.css?v=glass-restored-20261005">
+  <script src="assets/config.js" defer></script>
+  <script src="assets/translations.js?v=photos-20261005" defer></script>
+  <script src="assets/i18n.js?v=photos-20261005" defer></script>
+  <script src="assets/app.js?v=photos-20261005" defer></script>
+  <link rel="stylesheet" href="assets/responsive.css?v=photos-20261005">
+  <link rel="stylesheet" href="assets/photos.css?v=photos-20261005">
+  <script src="assets/photos.js?v=photos-20261005" defer></script>
+</head>
+<body class="photos-page" id="top">
+  <a class="skip-link" href="#main">Перейти до вмісту</a>
+  <div class="scroll-progress" aria-hidden="true"></div>
+  <header class="header">
+    <a class="brand" href="index.html#top" aria-label="EUROFEST GROUP — головна"><img class="brand-logo" src="assets/logo.webp" alt="" width="50" height="50"><span class="brand-name">EUROFEST <b>GROUP</b></span></a>
+    <nav class="nav" id="navigation" aria-label="Основна навігація"><a href="index.html#about">Про нас</a><a href="index.html#events">Події</a><a href="index.html#news">Новини</a><a href="index.html#team">Команда</a><a href="photos.html" aria-current="page">Фото з подій</a><a href="index.html#join">Приєднатися</a></nav>
+    <div class="language-switch" role="group" aria-label="Мова сайту"><button type="button" data-language="uk" aria-pressed="true" lang="uk">UA</button><button type="button" data-language="en" aria-pressed="false" lang="en">EN</button></div>
+    <a class="nav-discord" data-link="discord" href="https://discord.gg/qk5h7AK7Z4" target="_blank" rel="noopener noreferrer">Наш Discord</a>
+    <button class="menu-button" aria-controls="navigation" aria-expanded="false" aria-label="Відкрити меню"><span></span><span></span></button>
+  </header>
+  <main id="main" class="container photos-main">
+    <div class="section-label"><span>ГАЛЕРЕЯ / МОМЕНТИ РАЗОМ</span><span>EUROFEST GROUP</span></div>
+    <div class="photos-heading"><div><h1>НАШІ ПОДІЇ.<br><span>ВАШІ КАДРИ.</span></h1><p>Дороги, зустрічі та моменти, які хочеться зберегти.</p></div><a class="text-link" href="index.html#events">До календаря подій</a></div>
+    <div class="photos-toolbar"><p id="photos-count" role="status"></p><button class="button button-glass" id="photos-refresh" type="button">Оновити галерею</button></div>
+    <div id="photos-grid" class="photos-grid" aria-busy="true"><p class="community-empty">Завантажуємо фотографії…</p></div>
+    <p id="photos-status" class="community-status" role="status"></p>
+    <div class="photos-more"><button id="photos-more" type="button" class="button button-glass" hidden>Показати ще</button></div>
+    <noscript><p>Для перегляду фотографій увімкни JavaScript.</p></noscript>
+  </main>
+  <dialog id="photo-dialog" class="photo-dialog" aria-label="Перегляд фотографії">
+    <button id="photo-close" class="photo-control photo-close" type="button" aria-label="Закрити фото">×</button>
+    <div class="photo-stage"><button id="photo-prev" class="photo-control" type="button" aria-label="Попереднє фото">‹</button><div class="photo-image-wrap"><img id="photo-full" alt="Фото з події EUROFEST"><p id="photo-error" hidden>Це фото не завантажилося. Спробуй оновити галерею.</p></div><button id="photo-next" class="photo-control" type="button" aria-label="Наступне фото">›</button></div>
+    <div class="photo-caption"><p id="photo-caption" data-no-i18n></p><span id="photo-position" role="status"></span><a id="photo-original" target="_blank" rel="noopener noreferrer">Відкрити оригінал ↗</a></div>
+  </dialog>
+  <footer class="footer container"><a class="brand" href="#top"><img class="brand-logo" src="assets/logo.webp" alt="" width="50" height="50"><span class="brand-name">EUROFEST <b>GROUP</b></span></a><div class="footer-copy">© <span id="year">2026</span> EUROFEST GROUP.<span>Віртуальна транспортна компанія · Україна</span></div><button class="effects-toggle" type="button" aria-pressed="true">Ефекти: увімкнено</button><a class="back-top" href="#top">Нагору</a></footer>
+</body>
+</html>

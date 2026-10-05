@@ -171,7 +171,8 @@ body {
 }
 .principle,
 .convoy-panel,
-.join-card {
+.join-card,
+.community-card {
   border-radius: 26px;
   --glass-fill: rgba(24,22,30,.54);
 }
@@ -279,7 +280,8 @@ body {
   .principle,
   .convoy-panel,
   .join-card,
-  .event-card { --glass-blur: 10px; border-radius: 24px; }
+  .event-card,
+  .community-card { --glass-blur: 10px; border-radius: 24px; }
   .event-dialog { border-radius: 26px; }
   .faq details { padding: 17px 18px; }
 }

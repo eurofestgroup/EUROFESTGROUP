@@ -13,9 +13,9 @@
   let api;
   try { api = new URL(config.apiUrl || '/api/events', location.href); } catch (_) { api = null; }
   let events = [], filter = 'all', loaded = false, fetching = false, currentId = '', trigger = null;
-  const formatter = new Intl.DateTimeFormat('uk-UA', { timeZone: 'Europe/Kyiv', day: 'numeric', month: 'long', year: 'numeric' });
-  const monthFormatter = new Intl.DateTimeFormat('uk-UA', { timeZone: 'Europe/Kyiv', month: 'short' });
-  const checkedFormatter = new Intl.DateTimeFormat('uk-UA', { timeZone: 'Europe/Kyiv', hour: '2-digit', minute: '2-digit' });
+  let formatter = new Intl.DateTimeFormat(window.EUROFEST_I18N?.locale || 'uk-UA', { timeZone: 'Europe/Kyiv', day: 'numeric', month: 'long', year: 'numeric' });
+  let monthFormatter = new Intl.DateTimeFormat(window.EUROFEST_I18N?.locale || 'uk-UA', { timeZone: 'Europe/Kyiv', month: 'short' });
+  let checkedFormatter = new Intl.DateTimeFormat(window.EUROFEST_I18N?.locale || 'uk-UA', { timeZone: 'Europe/Kyiv', hour: '2-digit', minute: '2-digit' });
   const el = (tag, className, value) => { const node = document.createElement(tag); if (className) node.className = className; if (value !== undefined) node.textContent = value; return node; };
   const validDate = value => { const date = new Date(value); return Number.isNaN(date.getTime()) ? null : date; };
   const safeUrl = (value, media = false) => {
@@ -78,7 +78,7 @@
     const timing = el('span', 'event-countdown', index === 0 ? 'Найближча подія' : countdown(event));
     if (validDate(event.gather_at)?.getTime() <= Date.now()) timing.textContent = countdown(event);
     meta.append(timing);
-    const heading = el('h3', '', event.title);
+    const heading = el('h3', '', event.title); heading.setAttribute('data-no-i18n', '');
     const route = el('p', 'event-route', routeLine(event));
     body.append(meta, heading, route);
     if (event.organizer) body.append(el('p', 'event-organizer', event.organizer));
@@ -115,6 +115,7 @@
     detail.replaceChildren();
     detail.append(el('span', 'micro-label', `${event.id} / ${event.kind === 'online' ? 'TRUCKERSMP' : 'EUROFEST'}`), el('h2', '', event.title));
     const day = el('p', 'detail-date', formatter.format(new Date(event.date + 'T12:00:00Z')) + ' · час за Києвом');
+    detail.querySelector('h2').setAttribute('data-no-i18n', '');
     const headingId = 'event-detail-title'; detail.querySelector('h2').id = headingId;
     dialog.setAttribute('aria-labelledby', headingId);
     detail.append(day);
@@ -165,5 +166,13 @@
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)loadEvents();});
   const seconds=Math.max(30,Math.min(600,Number(config.refreshSeconds)||60));
   setInterval(()=>{if(!document.hidden){if(loaded)render();loadEvents();}},seconds*1000);
+  document.addEventListener('eurofest:language', () => {
+    const locale = window.EUROFEST_I18N?.locale || 'uk-UA';
+    formatter = new Intl.DateTimeFormat(locale, {timeZone:'Europe/Kyiv',day:'numeric',month:'long',year:'numeric'});
+    monthFormatter = new Intl.DateTimeFormat(locale, {timeZone:'Europe/Kyiv',month:'short'});
+    checkedFormatter = new Intl.DateTimeFormat(locale, {timeZone:'Europe/Kyiv',hour:'2-digit',minute:'2-digit'});
+    if (loaded) render();
+    if (dialog.open) { const event=liveEvents().find(e=>e.id===currentId); if(event) renderDetail(event); }
+  });
   loadEvents();
 })();
