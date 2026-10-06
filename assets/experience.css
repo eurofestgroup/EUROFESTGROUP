@@ -91,14 +91,16 @@ h1,h2,h3,h4{font-weight:700;font-kerning:normal;text-wrap:balance}
 }
 @media(prefers-reduced-transparency:reduce){.mobile-dock{background:#15151b;backdrop-filter:none;-webkit-backdrop-filter:none}}
 
-/* Merged road layer: a seamless night-drive loop that stays over the existing hero image. */
-.ef-roadfx{height:clamp(150px,24vh,250px);bottom:-4px;opacity:.72;mix-blend-mode:screen;filter:drop-shadow(0 -10px 24px rgba(241,50,73,.18))}
-.ef-roadfx::before{content:"";position:absolute;left:50%;bottom:-36%;width:min(82vw,760px);height:170%;transform:translateX(-50%);background:radial-gradient(ellipse at 50% 100%,rgba(241,50,73,.25),transparent 58%);animation:ef-road-breathe 3.8s ease-in-out infinite alternate}
-.ef-roadfx::after{content:"";position:absolute;inset:0;opacity:.38;background:repeating-linear-gradient(104deg,transparent 0 13%,rgba(255,255,255,.32) 13.15% 13.32%,transparent 13.5% 25%),repeating-linear-gradient(76deg,transparent 0 18%,rgba(241,50,73,.38) 18.15% 18.3%,transparent 18.55% 33%);transform:perspective(390px) rotateX(64deg) translateY(28%);transform-origin:50% 100%;background-size:100% 74px,100% 96px;animation:ef-road-streaks 1.55s linear infinite}
-.ef-plane{left:-48%;right:-48%;height:360px;transform:perspective(430px) rotateX(65deg);filter:drop-shadow(0 0 8px rgba(241,50,73,.18))}
-.ef-plane::before{width:7px;margin-left:-3.5px;background:repeating-linear-gradient(to top,#ff5a6d 0 38px,rgba(241,50,73,.12) 38px 48px,transparent 48px 116px);animation:ef-drive .95s linear infinite}
-.ef-plane::after{background:linear-gradient(90deg,transparent 27%,rgba(255,255,255,.58) 27% calc(27% + 3px),transparent calc(27% + 3px) calc(73% - 3px),rgba(255,255,255,.58) calc(73% - 3px) 73%,transparent 73%);animation:ef-road-lanes 1.3s linear infinite}
-@keyframes ef-road-streaks{to{background-position:0 148px,0 192px}}
-@keyframes ef-road-lanes{to{transform:translateY(32px)}}
-@keyframes ef-road-breathe{from{opacity:.45;transform:translateX(-50%) scaleX(.9)}to{opacity:.95;transform:translateX(-50%) scaleX(1.08)}}
-@media(max-width:700px){.ef-roadfx{height:145px;opacity:.58}.ef-roadfx::after{opacity:.24}.ef-plane{height:270px}}
+/* Cinematic road layer: the dash texture travels by one exact tile per loop.
+   Keeping the keyframe distance equal to the repeating-gradient period makes the
+   first and last frame mathematically identical instead of snapping at the seam. */
+.ef-roadfx{height:clamp(155px,24vh,255px);bottom:-5px;opacity:.68;mix-blend-mode:screen;filter:drop-shadow(0 -10px 24px rgba(241,50,73,.18))}
+.ef-roadfx::before{content:"";position:absolute;left:50%;bottom:-38%;width:min(78vw,740px);height:172%;transform:translateX(-50%);background:radial-gradient(ellipse at 50% 100%,rgba(241,50,73,.22),transparent 58%);animation:ef-road-breathe 4.8s ease-in-out infinite alternate;will-change:transform,opacity}
+.ef-roadfx::after{content:"";position:absolute;left:50%;bottom:-42%;width:min(76vw,720px);height:168%;transform:translateX(-50%) perspective(470px) rotateX(64deg);transform-origin:50% 100%;opacity:.28;background:repeating-linear-gradient(to bottom,transparent 0 116px,rgba(255,255,255,.18) 116px 119px,transparent 119px 232px);background-size:100% 232px;animation:ef-road-surface 1.62s linear infinite;will-change:background-position}
+.ef-plane{left:-48%;right:-48%;height:365px;transform:perspective(435px) rotateX(65deg);filter:drop-shadow(0 0 8px rgba(241,50,73,.17));will-change:transform}
+.ef-plane::before{width:7px;margin-left:-3.5px;background:repeating-linear-gradient(to top,#ff5a6d 0 38px,rgba(241,50,73,.12) 38px 48px,transparent 48px 116px);background-size:100% 116px;animation:ef-drive .96s linear infinite;will-change:background-position}
+.ef-plane::after{background:linear-gradient(90deg,transparent 27%,rgba(255,255,255,.52) 27% calc(27% + 3px),transparent calc(27% + 3px) calc(73% - 3px),rgba(255,255,255,.52) calc(73% - 3px) 73%,transparent 73%);opacity:.82}
+@keyframes ef-drive{from{background-position:0 0}to{background-position:0 -116px}}
+@keyframes ef-road-surface{from{background-position:0 0}to{background-position:0 -232px}}
+@keyframes ef-road-breathe{from{opacity:.42;transform:translateX(-50%) scaleX(.94)}to{opacity:.88;transform:translateX(-50%) scaleX(1.04)}}
+@media(max-width:700px){.ef-roadfx{height:145px;opacity:.58}.ef-roadfx::after{opacity:.2}.ef-plane{height:270px}}
