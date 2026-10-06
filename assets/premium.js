@@ -53,7 +53,7 @@ function drawMap(dep,arr,server){
  const svg=el('svg',{viewBox:`0 0 ${W} ${H}`,role:'img','aria-label':`${dep||''} — ${arr||''}`},box);
  for(let i=1;i<10;i++){el('line',{x1:i*W/10,y1:0,x2:i*W/10,y2:H,class:'ef-grid'},svg);el('line',{x1:0,y1:i*H/10,x2:W,y2:i*H/10,class:'ef-grid'},svg)}
  const pts=list.map(P),seen=new Set();pts.forEach((p,i)=>{pts.map((q,j)=>[j,Math.hypot(p[0]-q[0],p[1]-q[1])]).filter(r=>r[0]!==i&&r[1]<95).sort((u,v)=>u[1]-v[1]).slice(0,2).forEach(([j])=>{const key=i<j?i+'-'+j:j+'-'+i;if(seen.has(key))return;seen.add(key);el('line',{x1:p[0],y1:p[1],x2:pts[j][0],y2:pts[j][1],class:'ef-road'},svg)})});
- list.forEach(c=>{const[x,y]=P(c);el('circle',{cx:x,cy:y,r:2.2,class:'ef-city'},svg)});
+ const MAJ='Berlin Paris London Madrid Rome Warsaw Stockholm Helsinki Vienna Istanbul Oslo Lisbon Athens Prague Budapest Seattle|Los Angeles|Denver|Dallas|Houston|Salt Lake City|Phoenix|Las Vegas'.split(/[ |]/);list.forEach(c=>{const[x,y]=P(c);el('circle',{cx:x,cy:y,r:2.2,class:'ef-city'},svg);if(MAJ.includes(c.n.split(' ')[0])&&c!==a&&c!==b){const t=el('text',{x:x+6,y:y+4,class:'ef-faint'},svg);t.textContent=(!c.u||document.documentElement.lang==='en')?c.n:c.u}});
  if(a&&b){const[x1,y1_]=P(a),[x2,y2]=P(b),dx=x2-x1,dy=y2-y1_,l=Math.hypot(dx,dy)||1;
   el('path',{d:`M${x1} ${y1_}Q${(x1+x2)/2-dy*.18} ${(y1_+y2)/2+dx*.18} ${x2} ${y2}`,class:'ef-route'},svg)}
  [[a,'ef-from'],[b,'ef-to']].forEach(([c,cls],i)=>{if(!c)return;const[x,y]=P(c);
@@ -83,3 +83,7 @@ try{if(!reduce&&$('#top.hero')&&!sessionStorage.getItem('ef-intro')){sessionStor
  o.innerHTML='<i class="ef-lamp l"></i><i class="ef-lamp r"></i><img src="assets/logo.webp" alt="" width="104" height="104">';
  document.body.appendChild(o);setTimeout(()=>o.classList.add('go'),1700);setTimeout(()=>o.remove(),2600)}}catch(_){}
 })();
+
+/* Дорога в нижній частині головного екрана */
+(()=>{const h=document.querySelector('.hero');if(!h||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+ const f=document.createElement('div');f.className='ef-roadfx';f.setAttribute('aria-hidden','true');f.innerHTML='<div class="ef-plane"></div>';h.appendChild(f)})();
