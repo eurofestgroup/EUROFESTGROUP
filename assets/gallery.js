@@ -29,6 +29,7 @@
   let gridSignature='', detailSignature='';
   let events = [], filter = 'all', loaded = false, fetching = false, currentId = '', trigger = null;
   let previewTotal = 0, loadedFilter = 'all';
+  const dlcCache = new Map();
   let formatter = new Intl.DateTimeFormat(window.EUROFEST_I18N?.locale || 'uk-UA', { timeZone: 'Europe/Kyiv', day: 'numeric', month: 'long', year: 'numeric' });
   let monthFormatter = new Intl.DateTimeFormat(window.EUROFEST_I18N?.locale || 'uk-UA', { timeZone: 'Europe/Kyiv', month: 'short' });
   let checkedFormatter = new Intl.DateTimeFormat(window.EUROFEST_I18N?.locale || 'uk-UA', { timeZone: 'Europe/Kyiv', hour: '2-digit', minute: '2-digit' });
@@ -70,8 +71,48 @@
     if (!href) return null;
     const node = el('a', className, label); node.href = href; node.target = '_blank'; node.rel = 'noopener noreferrer'; return node;
   };
+  const dlcText = value => (value || '').replace(/[()]/g, '').trim().toLocaleLowerCase().replace(/\s+/g, ' ');
+  const dlcMissing = value => ['', 'не відома інформація', 'невідома інформація', 'немає інформації', 'не вказано', 'unknown', 'unknown information', 'not known', 'n/a', 'to be determined', '[]', '{}', 'null'].includes(dlcText(value));
+  const noDlc = value => ['none', 'не потрібно', 'не потрібні', 'none / не потрібно', 'без dlc', 'dlc не потрібні', 'no dlc', 'no dlc required'].includes(dlcText(value));
+  function dlcValue(event) {
+    if (noDlc(event.dlc)) return 'DLC не потрібні';
+    if (!dlcMissing(event.dlc)) return event.dlc;
+    let url;
+    try { url = new URL(safeUrl(event.event_url)); } catch (_) { return 'DLC уточнюються'; }
+    if (url.protocol !== 'https:' || !['truckersmp.com', 'www.truckersmp.com'].includes(url.hostname) || !/^\/events\/[1-9]\d{0,11}(?:-|\/?$)/.test(url.pathname) || !api || !/\/(?:events|archive)\/?$/.test(api.pathname) || !/^[A-Za-z0-9_-]{1,80}$/.test(event.id)) return 'DLC уточнюються';
+    const key = JSON.stringify([event.id, event.event_url]);
+    let entry = dlcCache.get(key);
+    if (!entry || entry.until <= Date.now()) {
+      entry = {loading: true, value: '', until: Date.now() + 20000};
+      dlcCache.set(key, entry);
+      while (dlcCache.size > 100) dlcCache.delete(dlcCache.keys().next().value);
+      const endpoint = new URL(api.href);
+      endpoint.pathname = endpoint.pathname.replace(/\/(?:events|archive)\/?$/, '/event-dlc/' + encodeURIComponent(event.id));
+      endpoint.search = ''; endpoint.hash = '';
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 18000);
+      (async () => {
+        try {
+          const response = await fetch(endpoint.href, {signal: controller.signal, cache: 'no-cache', credentials: 'omit', headers: {Accept: 'application/json'}});
+          if (!response.ok) throw new Error('DLC unavailable');
+          const payload = await response.json();
+          if (payload.status !== 'ok' || payload.event_id !== event.id || payload.event_url !== event.event_url || !['database', 'truckersmp'].includes(payload.source) || typeof payload.dlc !== 'string' || !payload.dlc || payload.dlc.length > 16000 || dlcMissing(payload.dlc)) throw new Error('Invalid DLC information');
+          entry.value = payload.dlc;
+          entry.until = Date.now() + 900000;
+        } catch (_) { entry.value = ''; entry.until = Date.now() + 60000; }
+        finally {
+          clearTimeout(timeout); entry.loading = false;
+          const latest = events.find(item => item.id === currentId);
+          if (dialog.open && latest?.id === event.id && latest.event_url === event.event_url && dlcMissing(latest.dlc)) renderDetail(latest);
+        }
+      })();
+    }
+    return entry.loading ? 'Завантажуємо DLC…' : noDlc(entry.value) ? 'DLC не потрібні' : entry.value || 'DLC уточнюються';
+  }
   function dlcField(value) {
     const field = el('dd', 'detail-dlc');
+    field.dataset.dlcValue = value;
+    field.setAttribute('aria-busy', String(value === 'Завантажуємо DLC…'));
     const source = value || 'Уточнюється';
     const english = window.EUROFEST_I18N?.locale?.startsWith('en');
     const description = english ? 'Open DLC purchase page (new tab)' : 'Відкрити сторінку купівлі DLC (нова вкладка)';
@@ -161,8 +202,14 @@
     document.getElementById('event-close').focus();
   }
   function renderDetail(event) {
+    const resolvedDlc = dlcValue(event);
     const signature=JSON.stringify([event,window.EUROFEST_I18N?.locale]);
-    if(detailSignature===signature)return;detailSignature=signature;
+    if (detailSignature === signature) {
+      const field = detail.querySelector('.detail-dlc');
+      if (field && field.dataset.dlcValue !== resolvedDlc) field.replaceWith(dlcField(resolvedDlc));
+      return;
+    }
+    detailSignature=signature;
     detail.replaceChildren();
     detail.append(el('span', 'micro-label', `${event.id} / ${event.kind === 'online' ? 'TRUCKERSMP' : 'EUROFEST'}`), el('h2', '', event.title));
     const day = el('p', 'detail-date', formatter.format(new Date(event.date + 'T12:00:00Z')) + ' · час за Києвом');
@@ -171,7 +218,7 @@
     dialog.setAttribute('aria-labelledby', headingId);
     detail.append(day);
     const fields = el('dl', 'detail-fields');
-    const values = [['Збір', event.gather_time], ['Виїзд', event.start_time], ['Місце збору',event.departure], ['Прибуття', event.arrival], ['Сервер',event.server], ['Організатор',event.organizer], ['DLC',event.dlc], ['Слот',event.slot]];
+    const values = [['Збір', event.gather_time], ['Виїзд', event.start_time], ['Місце збору',event.departure], ['Прибуття', event.arrival], ['Сервер',event.server], ['Організатор',event.organizer], ['DLC',resolvedDlc], ['Слот',event.slot]];
     values.forEach(([label,value]) => { const field = el('div'); field.append(el('dt','',label), label === 'DLC' ? dlcField(value) : el('dd','',value || 'Уточнюється')); fields.append(field); });
     detail.append(fields);
     if (event.route && !safeUrl(event.route)) detail.append(el('p', 'detail-route', event.route));
