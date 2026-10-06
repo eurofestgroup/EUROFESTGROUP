@@ -104,6 +104,6 @@ h1,h2,h3,h4{font-weight:700;font-kerning:normal;text-wrap:balance}
 @keyframes ef-road-surface{from{background-position:0 0}to{background-position:0 -232px}}
 @keyframes ef-road-breathe{from{opacity:.42;transform:translateX(-50%) scaleX(.94)}to{opacity:.88;transform:translateX(-50%) scaleX(1.04)}}
 /* Keep all road markings below the hero's horizontal divider. */
-.ef-roadfx{height:clamp(90px,13vh,135px)}
+.ef-roadfx{height:clamp(90px,13vh,135px);bottom:-1px}
 .ef-plane{height:235px}
 @media(max-width:700px){.ef-roadfx{height:85px;opacity:.58}.ef-roadfx::after{opacity:.2}.ef-plane{height:180px}}
