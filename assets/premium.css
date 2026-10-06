@@ -1,0 +1,54 @@
+/* EUROFEST GROUP — premium layer. Підключається ПІСЛЯ всіх стилів; змінює лише вигляд. */
+@import url('https://fonts.googleapis.com/css2?family=Onest:wght@400;500;700;800&display=swap');
+:root{--red-2:#ff6b7d;--ef-ease:cubic-bezier(.2,.8,.2,1)}
+body{font-family:Onest,Arial,Helvetica,sans-serif;text-rendering:optimizeLegibility}
+h1,h2,h3,.brand-name{font-family:Onest,Arial,Helvetica,sans-serif;letter-spacing:-.025em}
+:focus-visible{outline-color:var(--red-2)}
+
+/* Кінематографічне зерно + світло, що йде за курсором */
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:70;opacity:.05;mix-blend-mode:overlay;
+ background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.ef-glow{position:fixed;left:0;top:0;width:560px;height:560px;margin:-280px 0 0 -280px;border-radius:50%;pointer-events:none;z-index:0;
+ background:radial-gradient(closest-side,rgba(241,50,73,.17),transparent);opacity:0;transition:opacity .5s;
+ transform:translate3d(var(--gx,50vw),var(--gy,30vh),0);will-change:transform}
+.ef-glow.on{opacity:1}
+
+/* Меню та прогрес */
+.nav a{position:relative}
+.nav a::after{content:"";position:absolute;left:0;right:0;bottom:-8px;height:2px;background:var(--red);transform:scaleX(0);transform-origin:left;transition:transform .35s var(--ef-ease)}
+.nav a:hover::after,.nav a.is-active::after{transform:scaleX(1)}
+.nav a.is-active{color:#fff}
+.scroll-progress{background:linear-gradient(90deg,var(--red),var(--red-2))}
+
+/* Головний екран */
+.hero h1{text-shadow:0 10px 50px rgba(0,0,0,.6)}
+.hero h1 span{background:linear-gradient(95deg,var(--red-2),var(--red) 55%,#a3121f);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;text-shadow:none;filter:drop-shadow(0 0 30px rgba(241,50,73,.4))}
+
+/* Кнопки */
+.button{transition:translate .3s var(--ef-ease),box-shadow .3s var(--ef-ease),background .3s,border-color .3s}
+.button:hover{translate:0 -3px}.button:active{translate:0 0}
+.button-red:hover{box-shadow:0 16px 46px rgba(241,50,73,.55),inset 0 1px 0 rgba(255,255,255,.3)}
+
+/* Біжучий рядок цінностей */
+.brand-strip{overflow:hidden}
+.ef-track{display:flex;align-items:center;width:max-content;animation:ef-marquee 38s linear infinite}
+.ef-group{display:flex;align-items:center;gap:2.4rem;padding-right:2.4rem;flex:none;white-space:nowrap}
+.brand-strip:hover .ef-track{animation-play-state:paused}
+@keyframes ef-marquee{to{transform:translateX(-50%)}}
+
+/* Картки */
+.section-label span:first-child,.card-number{color:var(--red-2)}
+.principle,.join-card,.convoy-panel,.community-card,.identity-plaque{transition:translate .4s var(--ef-ease),border-color .4s,box-shadow .4s}
+.principle:hover,.join-card:hover,.convoy-panel:hover,.community-card:hover{translate:0 -5px;border-color:rgba(241,50,73,.55);box-shadow:0 24px 64px rgba(0,0,0,.5),0 0 46px rgba(241,50,73,.15)}
+.event-card{transition:translate .4s var(--ef-ease),box-shadow .4s,border-color .4s}
+.event-card:hover{translate:0 -6px}
+.vtc-stat strong{font-variant-numeric:tabular-nums}
+.faq summary{cursor:pointer;transition:color .25s}.faq summary:hover,.faq details[open] summary{color:var(--red-2)}
+.event-dialog[open]{animation:ef-pop .35s var(--ef-ease)}
+@keyframes ef-pop{from{opacity:0;transform:translateY(16px) scale(.97)}to{opacity:1;transform:none}}
+
+@media (hover:none){.ef-glow{display:none}}
+@media (prefers-reduced-motion:reduce){
+ .ef-track{animation:none;flex-wrap:wrap;width:auto}.ef-glow{display:none}
+ .button:hover,.principle:hover,.join-card:hover,.convoy-panel:hover,.community-card:hover,.event-card:hover{translate:none}
+ .event-dialog[open]{animation:none}}
