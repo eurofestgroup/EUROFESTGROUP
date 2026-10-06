@@ -96,7 +96,7 @@
   async function refresh() {
     if (busy) return;
     busy = true; refreshButton.disabled = true;
-    const controller = new AbortController(), timeout = setTimeout(() => controller.abort(), 12000);
+    const controller = new AbortController(), timeout = setTimeout(() => controller.abort(), 30000);
     try {
       if (!api || !['http:', 'https:'].includes(api.protocol) || (location.protocol === 'https:' && api.protocol !== 'https:')) throw new Error('invalid_api');
       const response = await fetch(api.href, { signal: controller.signal, cache: 'no-cache', credentials: 'omit', headers: { Accept: 'application/json' } });
@@ -104,7 +104,8 @@
       const state = await response.json();
       if (!state || typeof state.status !== 'string' || (state.data !== null && !Array.isArray(state.data))) throw new Error('invalid');
       latest = state;
-    } catch (_) {
+    } catch (error) {
+      console.warn('[EUROFEST news API]', error);
       if (latest?.data) latest = { ...latest, status: 'stale' };
       else latest = { data: null, status: 'unavailable' };
     } finally {

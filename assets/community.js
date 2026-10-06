@@ -89,7 +89,7 @@
   async function refresh() {
     if (busy) return;
     busy = true;document.getElementById('community-refresh').disabled=true;
-    const controller = new AbortController(), timeout = setTimeout(() => controller.abort(), 12000);
+    const controller = new AbortController(), timeout = setTimeout(() => controller.abort(), 30000);
     try {
       const response = await fetch(url, { signal: controller.signal, cache: 'no-cache', credentials: 'omit' });
       if (!response.ok) throw new Error('unavailable');
@@ -104,7 +104,8 @@
         document.querySelectorAll('[data-invite-event]').forEach(a => { a.href = invite; });
         document.getElementById('invite-hint').textContent = 'Відкриється канал запрошень EUROFEST. Для доступу приєднайся до нашого Discord.';
       }
-    } catch (_) {
+    } catch (error) {
+      console.warn('[EUROFEST community API]', error);
       const missing = { status: 'unavailable', data: null };
       if (!last) { renderProfile(missing); renderNews(missing); renderTeam(missing); renderPartners(missing); }
       else {

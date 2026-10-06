@@ -249,7 +249,7 @@
     fetching=true;refresh.disabled=true;
     const requestedFilter = filter;
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(),10000);
+    const timeout = setTimeout(() => controller.abort(),30000);
     try {
       if (!api || !['http:','https:'].includes(api.protocol) || (location.protocol==='https:' && api.protocol!=='https:')) throw new Error('Invalid API configuration');
       const requestUrl = new URL(api.href);
@@ -271,6 +271,7 @@
       status.textContent=`Оновлено о ${checkedFormatter.format(new Date())} · Київ`;status.classList.remove('events-warning');
       if(dialog.open){const event=liveEvents().find(event=>event.id===currentId);if(event)renderDetail(event);else close();}
     } catch(error) {
+      console.warn('[EUROFEST events API]', error);
       status.textContent=loaded ? 'Зв’язок тимчасово перервано. Показуємо останні отримані дані.' : archive ? 'Архів тимчасово недоступний. Спробуй оновити пізніше.' : 'Розклад тимчасово недоступний. Оголошення — у Discord.';
       status.classList.add('events-warning');
       if(!loaded){grid.setAttribute('aria-busy','false');grid.replaceChildren();const unavailable=el('div','events-empty');unavailable.append(el('span','micro-label','EUROFEST / КАЛЕНДАР'),el('h3','',archive ? 'Архів тимчасово недоступний.' : 'Точка збору — наш Discord.'),el('p','','Завітай до оголошень компанії, щоб дізнатися про наступний конвой.'));unavailable.append(link('Переглянути оголошення','https://discord.gg/qk5h7AK7Z4'));grid.append(unavailable);count.textContent='';}
