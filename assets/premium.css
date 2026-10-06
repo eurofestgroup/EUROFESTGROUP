@@ -127,3 +127,6 @@ html{scrollbar-color:#f13249 #09090c;scrollbar-width:thin}
 body main h2::after{content:"";display:block;width:68px;height:4px;margin-top:18px;border-radius:4px;background:linear-gradient(90deg,#f13249,transparent)}
 .brand-strip{-webkit-mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent);mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent)}
 .event-card:hover img{transform:scale(1.05)}
+
+/* v5: скляний шар вікна мав висоту видимої частини й їхав угору разом із прокруткою — звідси біла лінія посеред вмісту */
+.event-dialog::before,.event-dialog::after,.photo-dialog::before,.photo-dialog::after{display:none!important}
