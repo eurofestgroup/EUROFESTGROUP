@@ -2,24 +2,50 @@
 <html lang="uk">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#09090c">
   <meta name="description" content="Фотографії з конвоїв і подій EUROFEST GROUP.">
   <title>EUROFEST GROUP — Фото з подій</title>
   <link rel="icon" type="image/png" href="assets/favicon.png">
++  <script>
+    // Set the navigation policy before the first paint.
+    (() => {
+      'use strict';
+      const root = document.documentElement;
+      const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+      let disabled = reduced.matches;
+      try { disabled ||= localStorage.getItem('eurofest-effects') === 'off'; } catch (_) {}
+      root.classList.toggle('motion-suppressed', disabled);
+      const native = typeof document.startViewTransition === 'function' && 'onpageswap' in window && 'onpagereveal' in window;
+      const policy = document.createElement('style');
+      policy.id = 'eurofest-navigation-policy';
+      policy.textContent = '@view-transition{navigation:' + (native && !disabled ? 'auto' : 'none') + '}';
+      document.head.append(policy);
+      const skip = event => {
+        const transition = event.viewTransition;
+        if (!transition) return;
+        ['ready', 'finished', 'updateCallbackDone'].forEach(name => transition[name]?.catch(() => {}));
+        if (reduced.matches || root.classList.contains('motion-suppressed') || root.classList.contains('effects-off')) transition.skipTransition();
+      };
+      window.addEventListener('pageswap', skip);
+      window.addEventListener('pagereveal', skip);
+    })();
+  </script>
   <link rel="stylesheet" href="assets/style.css">
   <link rel="stylesheet" href="assets/glass.css?v=glass-restored-20261005">
   <link rel="stylesheet" href="assets/community.css?v=glass-restored-20261005">
   <script src="assets/config.js" defer></script>
-  <script src="assets/translations.js?v=dlc-lookup-20261005" defer></script>
-  <script src="assets/i18n.js?v=lists-20261005" defer></script>
+  <script src="assets/translations.js?v=experience-20261006" defer></script>
+  <script src="assets/i18n.js?v=experience-20261006" defer></script>
   <script src="assets/photo-cache.js?v=device-cache-20261005" defer></script>
-  <script src="assets/app.js?v=polish-20261005" defer></script>
+  <script src="assets/app.js?v=experience-20261006" defer></script>
   <link rel="stylesheet" href="assets/responsive.css?v=photos-20261005">
   <link rel="stylesheet" href="assets/photos.css?v=preview-fix-20261005">
-  <script src="assets/photos.js?v=polish-20261005" defer></script>
+  <script src="assets/photos.js?v=experience-20261006" defer></script>
   <link rel="stylesheet" href="assets/polish.css?v=dlc-links-20261005">
 <link rel="stylesheet" href="assets/premium.css?v=v5-20261006e">
+  <link rel="stylesheet" href="assets/experience.css?v=experience-20261006">
+  <script src="assets/experience.js?v=experience-20261006" defer></script>
 </head>
 <body class="photos-page" id="top">
   <a class="skip-link" href="#main">Перейти до вмісту</a>

@@ -2,20 +2,44 @@
 <html lang="uk">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#09090c">
   <meta name="description" content="EUROFEST GROUP — українська віртуальна транспортна компанія в Euro Truck Simulator 2. Спільні маршрути, конвої та команда, з якою хочеться їхати.">
   <title>EUROFEST GROUP — Твій шлях. Наша колона.</title>
   <link rel="preload" as="image" href="assets/convoy.webp" fetchpriority="high">
   <link rel="icon" type="image/png" href="assets/favicon.png">
++  <script>
+    // Set the navigation policy before the first paint.
+    (() => {
+      'use strict';
+      const root = document.documentElement;
+      const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+      let disabled = reduced.matches;
+      try { disabled ||= localStorage.getItem('eurofest-effects') === 'off'; } catch (_) {}
+      root.classList.toggle('motion-suppressed', disabled);
+      const native = typeof document.startViewTransition === 'function' && 'onpageswap' in window && 'onpagereveal' in window;
+      const policy = document.createElement('style');
+      policy.id = 'eurofest-navigation-policy';
+      policy.textContent = '@view-transition{navigation:' + (native && !disabled ? 'auto' : 'none') + '}';
+      document.head.append(policy);
+      const skip = event => {
+        const transition = event.viewTransition;
+        if (!transition) return;
+        ['ready', 'finished', 'updateCallbackDone'].forEach(name => transition[name]?.catch(() => {}));
+        if (reduced.matches || root.classList.contains('motion-suppressed') || root.classList.contains('effects-off')) transition.skipTransition();
+      };
+      window.addEventListener('pageswap', skip);
+      window.addEventListener('pagereveal', skip);
+    })();
+  </script>
   <link rel="stylesheet" href="assets/style.css">
   <link rel="stylesheet" href="assets/glass.css?v=glass-restored-20261005">
   <link rel="stylesheet" href="assets/community.css?v=glass-restored-20261005">
   <script src="assets/config.js" defer></script>
-  <script src="assets/translations.js?v=dlc-lookup-20261005" defer></script>
-  <script src="assets/i18n.js?v=lists-20261005" defer></script>
+  <script src="assets/translations.js?v=experience-20261006" defer></script>
+  <script src="assets/i18n.js?v=experience-20261006" defer></script>
   <script src="assets/photo-cache.js?v=device-cache-20261005" defer></script>
-  <script src="assets/app.js?v=polish-20261005" defer></script>
+  <script src="assets/app.js?v=experience-20261006" defer></script>
   <link rel="stylesheet" href="assets/responsive.css?v=photos-20261005">
   <script src="assets/gallery.js?v=dlc-lookup-20261005" defer></script>
   <script src="assets/news.js?v=preview-6-20261005" defer></script>
@@ -23,6 +47,8 @@
   <link rel="stylesheet" href="assets/lists.css?v=preview-6-20261005">
   <link rel="stylesheet" href="assets/polish.css?v=dlc-links-20261005">
 <link rel="stylesheet" href="assets/premium.css?v=v5-20261006e">
+  <link rel="stylesheet" href="assets/experience.css?v=experience-20261006">
+  <script src="assets/experience.js?v=experience-20261006" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Перейти до вмісту</a>
@@ -37,6 +63,7 @@
   <main id="main">
     <section class="hero" id="top" aria-labelledby="hero-title">
       <img class="hero-image" src="assets/convoy.webp" alt="Червона вантажівка на нічній дорозі серед гір" width="1881" height="836" fetchpriority="high">
+      <video id="hero-video" class="hero-video" muted loop playsinline preload="none" poster="assets/convoy.webp" data-src="media/convoy-loop.mp4" data-webm="media/convoy-loop.webm" aria-hidden="true" tabindex="-1" disablepictureinpicture></video>
       <div class="hero-shade" aria-hidden="true"></div><div class="hero-haze" aria-hidden="true"></div>
       <div class="hero-content container">
         <div class="eyebrow"><span class="red-line"></span> UKRAINIAN VIRTUAL TRUCKING COMPANY</div>

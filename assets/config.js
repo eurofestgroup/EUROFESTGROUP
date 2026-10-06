@@ -4,5 +4,8 @@ window.EUROFEST_CONFIG = {
   // Example only: 'https://YOUR-HOSTING-ADDRESS/api/events'
   // Blank = /api/events on the same server, useful for a local preview.
   apiUrl: 'https://i6t4udxoj3.apps.bot-hosting.cloud/api/events',
-  refreshSeconds: 60
+  refreshSeconds: 60,
+  // These two presentation options are independent and can be turned off separately.
+  galleryMagazine: true,
+  heroVideo: true
 };

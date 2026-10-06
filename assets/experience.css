@@ -1,0 +1,104 @@
+/* Local WOFF2 subsets: Ukrainian and English, without external font services. */
+@font-face{font-family:"Ubuntu derivative EUROFEST";font-style:normal;font-weight:400;font-display:swap;src:url("fonts/eurofest-regular.woff2") format("woff2")}
+@font-face{font-family:"Ubuntu derivative EUROFEST";font-style:normal;font-weight:500;font-display:swap;src:url("fonts/eurofest-medium.woff2") format("woff2")}
+@font-face{font-family:"Ubuntu derivative EUROFEST";font-style:normal;font-weight:700;font-display:swap;src:url("fonts/eurofest-bold.woff2") format("woff2")}
+body{font-family:"Ubuntu derivative EUROFEST",Arial,Helvetica,sans-serif;font-weight:400;line-height:1.7}
+input,select,button{font-family:inherit}
+h1,h2,h3,h4{font-weight:700;font-kerning:normal;text-wrap:balance}
+.hero h1{font-weight:700;line-height:1.13;letter-spacing:-.052em}
+.hero-description,.section-lead,.about-copy,.photos-heading p{line-height:1.85}
+.eyebrow,.micro-label,.section-label,.news-meta{font-weight:600}
+.event-card h3,.news-card h3{font-weight:700;line-height:1.4;text-wrap:pretty}
+.event-card h3,.news-card h3,.person-card h4{letter-spacing:-.025em}
+.header .brand-name{font-weight:700;font-size:15px;letter-spacing:-.045em}
+.header .nav{gap:16px}.header .nav a{font-size:12px;font-weight:500}
+.header .nav-discord{font-size:12px}.footer-copy{line-height:1.8}
+.button{font-weight:500}.event-times strong{font-weight:600}
+.hero-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:62% center;z-index:-3;pointer-events:none;opacity:0;transition:opacity .7s ease}
+.hero-video-ready .hero-video{opacity:1}
+.effects-off .hero-video,.motion-suppressed .hero-video{display:none}
+/* A magazine grid keeps DOM, chronological and keyboard order identical. */
+@media(min-width:901px){
+  .gallery-magazine .photos-grid{grid-template-columns:repeat(4,minmax(0,1fr));grid-auto-rows:clamp(145px,14vw,230px);gap:16px}
+  .gallery-magazine .photo-card{aspect-ratio:auto;height:100%}
+  .gallery-magazine .photo-card:nth-child(10n+1){grid-column:span 2;grid-row:span 2}
+  .gallery-magazine .photo-card:nth-child(10n+6){grid-column:span 2}
+  .gallery-magazine .photo-card:nth-child(10n+1) .photo-card-meta{padding:70px 25px 24px;font-size:13px}
+  .gallery-magazine .photo-card:nth-child(10n+1) .photo-expand{width:36px;height:36px;font-size:20px}
+}
+@media(min-width:601px) and (max-width:900px){
+  .gallery-magazine .photos-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+  .gallery-magazine .photo-card:nth-child(7n+1){grid-column:span 2;aspect-ratio:16/9}
+}
+@media(max-width:600px){
+  .gallery-magazine .photo-card:nth-child(7n+1){grid-column:span 2;aspect-ratio:16/10}
+  .gallery-magazine .photo-card:nth-child(7n+1) .photo-card-meta{padding:44px 16px 14px;font-size:11px}
+}
+/* A stable stage keeps the preview and original aligned while loading. */
+.photo-image-wrap{min-height:0}
+.photo-image-wrap img{width:100%;height:calc(100dvh - 250px);max-height:640px;object-fit:contain}
+.photo-dialog.photo-motion-running{animation:none}
+.photo-motion-running #photo-full{opacity:0!important}
+.photo-zoom-layer{position:fixed;z-index:10;pointer-events:none;overflow:hidden;transform-origin:center;will-change:transform,clip-path}
+.photo-zoom-layer img{display:block;width:100%;height:100%;object-fit:cover;max-width:none;user-select:none}
+.glass-pressable{overflow:hidden;transition:transform .2s var(--ease),border-color .2s,background-color .2s,box-shadow .2s}
+.press-relative{position:relative}
+.glass-pressable.is-pressed{transform:translateY(1px) scale(.972)!important;box-shadow:inset 0 2px 9px #0005,inset 0 1px 0 #ffffff15}
+.press-glint{position:absolute;inset:-50%;pointer-events:none;background:linear-gradient(110deg,transparent 35%,#ffffff20 49%,transparent 63%);z-index:4;opacity:0;transform:translateX(-65%)}
+.mobile-dock{display:none}
+.error-main{min-height:calc(100svh - 135px);padding:185px 0 100px;position:relative;isolation:isolate;display:flex;align-items:center;overflow:hidden}
+.error-main .container{position:relative;z-index:1}
+.error-background{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:72% center;z-index:-3;opacity:.42}
+.error-shade{position:absolute;inset:0;z-index:-2;background:linear-gradient(90deg,#09090bf7,#09090ba8 65%,#09090b66),linear-gradient(0deg,#09090b,transparent 55%)}
+.error-main h1{font-size:clamp(38px,5.5vw,78px);line-height:1.1;letter-spacing:-.05em;margin:0 0 24px;max-width:900px}
+.error-main h1 span{color:var(--red)}.error-main .section-label{justify-content:flex-start;max-width:510px}
+.error-main p{max-width:500px;color:#bbb5c4;font-size:16px;line-height:1.85;margin:0 0 32px}
+.error-code{position:absolute;right:-.02em;bottom:-.13em;z-index:-1;font-size:clamp(200px,35vw,550px);font-weight:700;letter-spacing:-.1em;line-height:1;color:#ffffff04;-webkit-text-stroke:1px #ffffff14;pointer-events:none}
+/* Progressive enhancement: normal links still work in every browser. */
+::view-transition-old(root){animation:efg-page-out .24s ease both;mix-blend-mode:normal}
+::view-transition-new(root){animation:efg-page-in .32s var(--ease) both;mix-blend-mode:normal}
+.header{view-transition-name:efg-header}
+::view-transition-old(efg-header),::view-transition-new(efg-header){animation:none;mix-blend-mode:normal}
+@keyframes efg-page-out{to{opacity:0;filter:blur(2px)}}
+@keyframes efg-page-in{from{opacity:0;filter:blur(3px)}to{opacity:1;filter:blur(0)}}
+.motion-suppressed::view-transition-group(*),.motion-suppressed::view-transition-old(*),.motion-suppressed::view-transition-new(*){animation:none!important}
+.motion-suppressed .press-glint,.effects-off .press-glint{display:none}
+@media(max-width:1100px){
+  .header .nav a{font-size:14px;font-weight:500}.header .nav{gap:0}
+  .hero-video{display:none}.hero-video-ready .hero-video{opacity:0}
+}
+@media(max-width:760px){
+  body.has-mobile-dock{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
+  html{scroll-padding-bottom:calc(104px + env(safe-area-inset-bottom,0px))}
+  .header .brand-name{font-size:12px;letter-spacing:-.03em}
+  .hero h1{font-size:clamp(32px,9.2vw,62px);line-height:1.14;letter-spacing:-.048em}
+  .photos-heading h1,.gallery-heading h1{line-height:1.13}
+  .photo-image-wrap img{height:calc(100dvh - 275px);max-height:640px}
+  .mobile-dock{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));position:fixed;z-index:45;bottom:calc(12px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);width:min(430px,calc(100% - 24px));gap:3px;padding:6px;border-radius:26px;border:1px solid #ffffff2b;background:linear-gradient(135deg,#222127d9,#111116e8);box-shadow:inset 0 1px 0 #ffffff29,0 10px 35px #0008;backdrop-filter:blur(16px) saturate(120%);-webkit-backdrop-filter:blur(16px) saturate(120%);view-transition-name:efg-dock}
+  .mobile-dock a{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-width:0;min-height:60px;padding:8px 4px;border-radius:19px;font-size:10px;font-weight:600;color:#b6b2bd;line-height:1.2;border:1px solid transparent}
+  .mobile-dock svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+  .mobile-dock a.is-active{color:#ff9aa7;background:linear-gradient(135deg,#f1324923,#ffffff05);border-color:#ff9aa725;box-shadow:inset 0 1px 0 #ffffff17}
+  .mobile-dock a:focus-visible{outline-offset:1px}.dialog-open .mobile-dock{visibility:hidden;pointer-events:none}
+  .effects-off .mobile-dock{background:#15151bf5;backdrop-filter:none;-webkit-backdrop-filter:none}
+  .error-main{min-height:calc(100svh - 130px);padding:140px 0 80px}
+  .error-main h1{font-size:clamp(32px,9vw,58px)}.error-main p{font-size:15px}.error-code{bottom:10px;font-size:58vw;right:14px}
+  .error-main .hero-actions{gap:10px}.error-main .button{font-size:12px;padding-inline:18px}
+}
+::view-transition-old(efg-dock),::view-transition-new(efg-dock){animation:none;mix-blend-mode:normal}
+@media(prefers-reduced-motion:reduce){
+  ::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation:none!important}
+  .hero-video{display:none}.glass-pressable.is-pressed{transform:none!important}.press-glint{display:none}
+}
+@media(prefers-reduced-transparency:reduce){.mobile-dock{background:#15151b;backdrop-filter:none;-webkit-backdrop-filter:none}}
+
+/* Merged road layer: a seamless night-drive loop that stays over the existing hero image. */
+.ef-roadfx{height:clamp(150px,24vh,250px);bottom:-4px;opacity:.72;mix-blend-mode:screen;filter:drop-shadow(0 -10px 24px rgba(241,50,73,.18))}
+.ef-roadfx::before{content:"";position:absolute;left:50%;bottom:-36%;width:min(82vw,760px);height:170%;transform:translateX(-50%);background:radial-gradient(ellipse at 50% 100%,rgba(241,50,73,.25),transparent 58%);animation:ef-road-breathe 3.8s ease-in-out infinite alternate}
+.ef-roadfx::after{content:"";position:absolute;inset:0;opacity:.38;background:repeating-linear-gradient(104deg,transparent 0 13%,rgba(255,255,255,.32) 13.15% 13.32%,transparent 13.5% 25%),repeating-linear-gradient(76deg,transparent 0 18%,rgba(241,50,73,.38) 18.15% 18.3%,transparent 18.55% 33%);transform:perspective(390px) rotateX(64deg) translateY(28%);transform-origin:50% 100%;background-size:100% 74px,100% 96px;animation:ef-road-streaks 1.55s linear infinite}
+.ef-plane{left:-48%;right:-48%;height:360px;transform:perspective(430px) rotateX(65deg);filter:drop-shadow(0 0 8px rgba(241,50,73,.18))}
+.ef-plane::before{width:7px;margin-left:-3.5px;background:repeating-linear-gradient(to top,#ff5a6d 0 38px,rgba(241,50,73,.12) 38px 48px,transparent 48px 116px);animation:ef-drive .95s linear infinite}
+.ef-plane::after{background:linear-gradient(90deg,transparent 27%,rgba(255,255,255,.58) 27% calc(27% + 3px),transparent calc(27% + 3px) calc(73% - 3px),rgba(255,255,255,.58) calc(73% - 3px) 73%,transparent 73%);animation:ef-road-lanes 1.3s linear infinite}
+@keyframes ef-road-streaks{to{background-position:0 148px,0 192px}}
+@keyframes ef-road-lanes{to{transform:translateY(32px)}}
+@keyframes ef-road-breathe{from{opacity:.45;transform:translateX(-50%) scaleX(.9)}to{opacity:.95;transform:translateX(-50%) scaleX(1.08)}}
+@media(max-width:700px){.ef-roadfx{height:145px;opacity:.58}.ef-roadfx::after{opacity:.24}.ef-plane{height:270px}}

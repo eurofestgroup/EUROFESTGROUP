@@ -55,8 +55,8 @@
       const raw = anchor.getAttribute('href');
       if (!raw || raw.startsWith('#')) return;
       try {
-        const url = new URL(raw, location.href);
-        if (url.origin === location.origin && /\/(?:index|photos|archive|events|news)\.html$/.test(url.pathname)) {
+        const url = new URL(raw, document.baseURI);
+        if (url.origin === location.origin && /\/(?:index|photos|archive|events|news|404)\.html$/.test(url.pathname)) {
           url.searchParams.set('lang', language);
           anchor.setAttribute('href', url.pathname + url.search + url.hash);
         }

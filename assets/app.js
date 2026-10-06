@@ -36,6 +36,7 @@
     toggle.setAttribute('aria-pressed', String(effects));
     toggle.textContent = effects ? 'Ефекти: увімкнено' : 'Ефекти: вимкнено';
     if (!effects) document.querySelectorAll('.liquid-glass.is-lit').forEach(surface => surface.classList.remove('is-lit'));
+    document.dispatchEvent(new CustomEvent('eurofest:effects', { detail: { enabled: effects } }));
   };
   toggle.addEventListener('click', () => {
     effects = !effects; explicitPreference = true; updateEffects();

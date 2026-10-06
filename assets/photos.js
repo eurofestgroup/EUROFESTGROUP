@@ -10,6 +10,7 @@
   endpoint.pathname = endpoint.pathname.replace(/\/api\/events\/?$/, '/api/photos'); endpoint.search = ''; endpoint.hash = '';
   let photos = [], visible = 24, activeId = '', trigger = null, loading = false, loaded = false, lastUpdated = '', state = 'loading';
   const cardCache = new Map();
+  let closing = false;
   let rendered = '';
   const safeImage = url => {
     try { const u = new URL(url); return u.protocol === 'https:' && ['cdn.discordapp.com', 'media.discordapp.net'].includes(u.hostname) && u.pathname.startsWith('/attachments/') && !u.username && !u.password ? u.href : ''; }
@@ -73,7 +74,7 @@
   const nextOriginal = new Image();nextOriginal.decoding='async';
   function displayPhoto() {
     const index = photos.findIndex(photo => photo.id === activeId), photo = photos[index];
-    if (!photo) { if (dialog.open) dialog.close(); return; }
+    if (!photo) { window.EUROFEST_PHOTO_MOTION?.stop(); if (dialog.open) dialog.close(); return; }
     error.hidden = true; full.hidden = false;
     if(full.getAttribute('src')!==photo.url){full.parentElement.classList.add('is-loading');full.src = photo.url;} full.alt = photo.caption || t('Фото з події EUROFEST');
     byId('photo-caption').textContent = photo.caption;
@@ -84,24 +85,37 @@
     byId('photo-prev').disabled = photos.length < 2; byId('photo-next').disabled = photos.length < 2;
   }
   function openPhoto(id, button) {
+    const snapshot = window.EUROFEST_PHOTO_MOTION?.capture(button);
     activeId = id; trigger = button; displayPhoto();
     dialog.showModal(); document.body.classList.add('dialog-open'); byId('photo-close').focus();
+    window.EUROFEST_PHOTO_MOTION?.open(dialog, full, snapshot);
   }
   function move(step) {
-    if (!photos.length) return;
+    if (!photos.length || closing) return;
+    window.EUROFEST_PHOTO_MOTION?.stop();
     const index = photos.findIndex(photo => photo.id === activeId);
     activeId = photos[(index + step + photos.length) % photos.length].id; displayPhoto();
   }
-  full.addEventListener('load',()=>{full.parentElement.classList.remove('is-loading');full.hidden=false;error.hidden=true;});
-  full.addEventListener('error', () => {full.parentElement.classList.remove('is-loading');full.hidden = true; error.hidden = false; });
-  byId('photo-close').addEventListener('click', () => dialog.close());
+  full.addEventListener('load',()=>{full.parentElement.classList.remove('is-loading');full.hidden=false;error.hidden=true;window.EUROFEST_PHOTO_MOTION?.settle();});
+  full.addEventListener('error', () => {full.parentElement.classList.remove('is-loading');full.hidden = true; error.hidden = false;window.EUROFEST_PHOTO_MOTION?.settle(); });
+  function requestClose() {
+    if (closing || !dialog.open) return;
+    const card = [...grid.querySelectorAll('[data-photo-id]')].find(item => item.dataset.photoId === activeId);
+    const animation = window.EUROFEST_PHOTO_MOTION?.close(dialog, full, card);
+    if (!animation) { dialog.close(); return; }
+    closing = true;
+    animation.finally(() => { if (dialog.open) dialog.close(); closing = false; });
+  }
+  byId('photo-close').addEventListener('click', requestClose);
+  dialog.addEventListener('cancel', event => { event.preventDefault(); requestClose(); });
   byId('photo-prev').addEventListener('click', () => move(-1)); byId('photo-next').addEventListener('click', () => move(1));
   dialog.addEventListener('close', () => {
+    closing = false; window.EUROFEST_PHOTO_MOTION?.stop();
     document.body.classList.remove('dialog-open');
     const replacement = [...grid.querySelectorAll('[data-photo-id]')].find(card => card.dataset.photoId === activeId);
     (trigger?.isConnected ? trigger : replacement || refresh).focus(); activeId = '';full.parentElement.classList.remove('is-loading');full.removeAttribute('src');nextOriginal.removeAttribute('src');
   });
-  dialog.addEventListener('click', event => { if (event.target === dialog) { const r = dialog.getBoundingClientRect(); if (event.clientX < r.left || event.clientX > r.right || event.clientY < r.top || event.clientY > r.bottom) dialog.close(); } });
+  dialog.addEventListener('click', event => { if (event.target === dialog) { const r = dialog.getBoundingClientRect(); if (event.clientX < r.left || event.clientX > r.right || event.clientY < r.top || event.clientY > r.bottom) requestClose(); } });
   document.addEventListener('keydown', event => { if (dialog.open && ['ArrowLeft', 'ArrowRight'].includes(event.key)) { event.preventDefault(); move(event.key === 'ArrowLeft' ? -1 : 1); } });
   let swipe = null;
   full.addEventListener('pointerdown', event => { if (event.pointerType === 'touch' && event.isPrimary) swipe = { x: event.clientX, y: event.clientY }; }, { passive: true });
