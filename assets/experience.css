@@ -107,3 +107,39 @@ h1,h2,h3,h4{font-weight:700;font-kerning:normal;text-wrap:balance}
 .ef-roadfx{height:clamp(90px,13vh,135px);bottom:-1px}
 .ef-plane{height:235px}
 @media(max-width:700px){.ef-roadfx{height:85px;opacity:.58}.ef-roadfx::after{opacity:.2}.ef-plane{height:180px}}
+
+/* Quiet polish, shared by Ukrainian and English pages. */
+.ef-image-fade{opacity:0;transition:opacity .45s ease}
+.ef-image-fade.ef-image-ready{opacity:1}
+.ef-skeleton-grid{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}
+#events-grid:has(.ef-skeleton-grid)>:not(.ef-skeleton-grid),#news-grid:has(.ef-skeleton-grid)>:not(.ef-skeleton-grid),#photos-grid:has(.ef-skeleton-grid)>:not(.ef-skeleton-grid){display:none}
+.ef-skeleton-card{min-height:280px;padding:18px;border:1px solid #ffffff12;border-radius:20px;background:#ffffff03;overflow:hidden}
+.ef-skeleton-cover,.ef-skeleton-line{display:block;background:linear-gradient(100deg,#ffffff04 20%,#ffffff09 45%,#ffffff04 70%);background-size:220% 100%;animation:ef-skeleton 2.4s ease-in-out infinite}
+.ef-skeleton-cover{height:175px;border-radius:12px;margin-bottom:22px}
+.ef-skeleton-line{height:12px;width:80%;border-radius:6px;margin-top:14px}
+.ef-skeleton-line.short{width:52%}
+@keyframes ef-skeleton{from{background-position:100% 0}to{background-position:-100% 0}}
+.section{padding-block:clamp(66px,7vw,108px)}
+.event-card,.news-card,.person-card,.partner-card{min-width:0}
+.event-card h3,.news-card h3,.person-card h4{overflow-wrap:anywhere}
+.news-grid,.events-grid{gap:22px}
+.gallery-footer,.community-heading{gap:20px}
+@media(hover:hover) and (pointer:fine){
+  .liquid-glass{transition:border-color .25s ease,box-shadow .25s ease}
+  .liquid-glass:hover{border-color:#ffffff2a;box-shadow:inset 0 1px 0 #ffffff24,0 12px 35px #0003}
+}
+@media(max-width:760px){
+  .ef-skeleton-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+  .ef-skeleton-card{min-height:205px;padding:12px}
+  .ef-skeleton-cover{height:115px;margin-bottom:16px}
+  .news-card{padding:24px}
+  .gallery-footer,.community-heading{flex-wrap:wrap}
+  .gallery-actions{flex-wrap:wrap;gap:14px}
+  .button,#events-refresh,#community-refresh,#news-refresh,#photos-refresh{min-height:44px}
+  input,select{font-size:16px}
+  .photo-dialog,.event-dialog{max-width:calc(100vw - 20px);max-height:calc(100dvh - 24px)}
+}
+@media(max-width:380px){.ef-skeleton-grid{grid-template-columns:1fr}.hero-actions .button{padding-inline:14px}.news-card{padding:20px}}
+@media(prefers-reduced-motion:reduce){.ef-image-fade{opacity:1;transition:none}.ef-skeleton-cover,.ef-skeleton-line{animation:none}}
+.effects-off .ef-image-fade{opacity:1;transition:none}
+.effects-off .ef-skeleton-cover,.effects-off .ef-skeleton-line{animation:none}

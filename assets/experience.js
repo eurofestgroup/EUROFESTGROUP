@@ -9,6 +9,40 @@
   try { sessionStorage.setItem('eurofest-site-base', base.pathname); } catch (_) {}
   root.classList.toggle('gallery-magazine', config.galleryMagazine === true);
 
+  // Reserve the initial card layout while the existing API loaders do their work.
+  for (const grid of document.querySelectorAll('#events-grid,#news-grid,#photos-grid')) {
+    if (grid.getAttribute('aria-busy') !== 'true') continue;
+    const skeletons = document.createElement('div');
+    skeletons.className = 'ef-skeleton-grid'; skeletons.setAttribute('aria-hidden', 'true');
+    for (let i = 0; i < 6; i++) {
+      const card = document.createElement('div'); card.className = 'ef-skeleton-card';
+      card.innerHTML = '<span class="ef-skeleton-cover"></span><span class="ef-skeleton-line"></span><span class="ef-skeleton-line short"></span>';
+      skeletons.append(card);
+    }
+    grid.prepend(skeletons);
+    const observer = new MutationObserver(() => {
+      if (!skeletons.isConnected || grid.getAttribute('aria-busy') === 'false' || grid.querySelector('.event-card,.news-card,.photo-card')) {
+        observer.disconnect(); skeletons.remove();
+      }
+    });
+    observer.observe(grid, { childList: true, attributes: true, attributeFilter: ['aria-busy'] });
+  }
+  const prepareImage = img => {
+    if (!img.matches('.photo-card img,.event-card img,.person-avatar img,.partner-logo img') || img.dataset.efFade) return;
+    img.dataset.efFade = '1'; img.classList.add('ef-image-fade');
+    const reveal = () => img.classList.add('ef-image-ready');
+    if (img.complete && img.naturalWidth) reveal();
+    else img.addEventListener('load', reveal, { once: true });
+  };
+  document.querySelectorAll('img').forEach(prepareImage);
+  new MutationObserver(records => {
+    for (const record of records) for (const node of record.addedNodes) {
+      if (node.nodeType !== 1) continue;
+      if (node.tagName === 'IMG') prepareImage(node);
+      node.querySelectorAll('img').forEach(prepareImage);
+    }
+  }).observe(document.body, { childList: true, subtree: true });
+
   // Four persistent destinations, within the current GitHub project directory.
   const icons = [
     '<path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/>',
