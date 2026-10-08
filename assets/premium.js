@@ -9,16 +9,6 @@ if(!reduce&&matchMedia('(hover:hover)').matches){
   if(!raf)raf=requestAnimationFrame(()=>{raf=0;g.style.setProperty('--gx',x+'px');g.style.setProperty('--gy',y+'px')})},{passive:true});
  document.addEventListener('pointerleave',()=>g.classList.remove('on'));
 }
-/* Біжучий рядок; копія синхронізується при зміні мови */
-const strip=$('.brand-strip');
-if(strip&&!reduce){
- const track=document.createElement('div'),a=document.createElement('div'),b=document.createElement('div');
- track.className='ef-track';a.className=b.className='ef-group';
- while(strip.firstChild)a.appendChild(strip.firstChild);
- b.innerHTML=a.innerHTML;b.setAttribute('aria-hidden','true');
- track.append(a,b);strip.appendChild(track);
- new MutationObserver(()=>{b.innerHTML=a.innerHTML}).observe(a,{childList:true,characterData:true,subtree:true});
-}
 /* Лічильник учасників VTC */
 const c=$('#vtc-count');
 if(c&&!reduce){let busy=false;

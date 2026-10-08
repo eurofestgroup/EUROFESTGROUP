@@ -29,13 +29,6 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:70;opa
 .button:hover{translate:0 -3px}.button:active{translate:0 0}
 .button-red:hover{box-shadow:0 16px 46px rgba(241,50,73,.55),inset 0 1px 0 rgba(255,255,255,.3)}
 
-/* Біжучий рядок цінностей */
-.brand-strip{overflow:hidden}
-.ef-track{display:flex;align-items:center;width:max-content;animation:ef-marquee 38s linear infinite}
-.ef-group{display:flex;align-items:center;gap:2.4rem;padding-right:2.4rem;flex:none;white-space:nowrap}
-.brand-strip:hover .ef-track{animation-play-state:paused}
-@keyframes ef-marquee{to{transform:translateX(-50%)}}
-
 /* Картки */
 .section-label span:first-child,.card-number{color:var(--red-2)}
 .principle,.join-card,.convoy-panel,.community-card,.identity-plaque{transition:translate .4s var(--ef-ease),border-color .4s,box-shadow .4s}
@@ -49,7 +42,7 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:70;opa
 
 @media (hover:none){.ef-glow{display:none}}
 @media (prefers-reduced-motion:reduce){
- .ef-track{animation:none;flex-wrap:wrap;width:auto}.ef-glow{display:none}
+ .ef-glow{display:none}
  .button:hover,.principle:hover,.join-card:hover,.convoy-panel:hover,.community-card:hover,.event-card:hover{translate:none}
  .event-dialog[open]{animation:none}}
 
@@ -115,8 +108,6 @@ body.dialog-open .ef-glow,.event-dialog[open]~.ef-glow{opacity:0!important}
 .ef-plane{position:absolute;left:-30%;right:-30%;bottom:0;height:300px;transform-origin:50% 100%;transform:perspective(340px) rotateX(66deg)}
 .ef-plane::before{content:"";position:absolute;left:50%;top:0;bottom:0;width:8px;margin-left:-4px;
  background:repeating-linear-gradient(to top,#f13249 0 44px,transparent 44px 110px);animation:ef-drive 1.1s linear infinite}
-.ef-plane::after{content:"";position:absolute;inset:0;
- background:linear-gradient(90deg,transparent 30%,rgba(255,255,255,.4) 30% calc(30% + 4px),transparent calc(30% + 4px) calc(70% - 4px),rgba(255,255,255,.4) calc(70% - 4px) 70%,transparent 70%)}
 @keyframes ef-drive{to{background-position:0 -110px}}
 @media(max-width:700px){.ef-roadfx{height:130px}}
 
@@ -125,7 +116,6 @@ html{scrollbar-color:#f13249 #09090c;scrollbar-width:thin}
 ::-webkit-scrollbar{width:10px}::-webkit-scrollbar-track{background:#09090c}
 ::-webkit-scrollbar-thumb{background:linear-gradient(#f13249,#a3121f);border-radius:8px;border:2px solid #09090c}
 body main h2::after{content:"";display:block;width:68px;height:4px;margin-top:18px;border-radius:4px;background:linear-gradient(90deg,#f13249,transparent)}
-.brand-strip{-webkit-mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent);mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent)}
 .event-card:hover img{transform:scale(1.05)}
 
 /* v5: скляний шар вікна мав висоту видимої частини й їхав угору разом із прокруткою — звідси біла лінія посеред вмісту */

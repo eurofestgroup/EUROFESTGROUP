@@ -221,36 +221,6 @@
   }
   window.EUROFEST_PHOTO_MOTION = { capture, open: openZoom, close: closeZoom, settle: settleZoom, stop: stopZoom };
 
-  // The video never gets a src on a phone, with reduced motion or data saving.
-  const video = document.getElementById('hero-video');
-  const hero = video?.closest('.hero');
-  const desktop = window.matchMedia('(min-width: 1101px)');
-  const connection = navigator.connection;
-  let videoReady = false, heroVisible = true, videoFailed = false, startingVideo = false;
-  const videoEligible = () => config.heroVideo === true && videoReady && desktop.matches && motionAllowed() && !document.hidden && heroVisible && !videoFailed && !connection?.saveData && !['slow-2g', '2g', '3g'].includes(connection?.effectiveType);
-  function syncVideo() {
-    if (!video) return;
-    if (!videoEligible()) { if (!video.paused) video.pause(); hero.classList.remove('hero-video-ready'); return; }
-    if (!video.hasAttribute('src')) {
-      const source = video.dataset.webm && video.canPlayType('video/webm;codecs="vp9"') ? video.dataset.webm : video.dataset.src;
-      video.muted = true; video.src = new URL(source, base).href;
-    }
-    if (!video.paused || startingVideo) return;
-    startingVideo = true;
-    const play = video.play();
-    Promise.resolve(play).catch(() => { hero.classList.remove('hero-video-ready'); }).finally(() => { startingVideo = false; });
-  }
-  if (video && config.heroVideo === true) {
-    video.addEventListener('playing', () => { if (videoEligible()) hero.classList.add('hero-video-ready'); else syncVideo(); });
-    video.addEventListener('error', () => { videoFailed = true; hero.classList.remove('hero-video-ready'); video.removeAttribute('src'); video.load(); });
-    if ('IntersectionObserver' in window) {
-      const observer = new IntersectionObserver(entries => { heroVisible = entries[0].isIntersecting; syncVideo(); }, { threshold: .01 });
-      observer.observe(hero);
-    }
-    desktop.addEventListener('change', syncVideo);
-    connection?.addEventListener?.('change', syncVideo);
-    setTimeout(() => { videoReady = true; syncVideo(); }, 8000);
-  }
   function updateMotion() {
     root.classList.toggle('motion-suppressed', !motionAllowed());
     const policy = document.getElementById('eurofest-navigation-policy');
@@ -261,10 +231,9 @@
       document.querySelectorAll('.press-glint').forEach(glint => glint.getAnimations?.().forEach(animation => animation.cancel()));
       pageAnimation?.cancel();
     }
-    syncVideo();
   }
   document.addEventListener('eurofest:effects', updateMotion);
   reduced.addEventListener('change', updateMotion);
-  document.addEventListener('visibilitychange', () => { if (document.hidden) releasePress(); syncVideo(); });
+  document.addEventListener('visibilitychange', () => { if (document.hidden) releasePress(); });
   updateMotion();
 })();
